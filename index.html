@@ -1,195 +1,223 @@
-<html>
+
+  <html>
 
   <body>
+  <style>
+  body{
+        margin: 0px;
+        padding: 0px;
+    }
+
+.b {
+  width: 90%;
+}
+
+.c {
+  width: 90%;
+}
+
+  
+  
+  </style>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <p id="p" style="font-family:monospace">
-      Module name<input type="text" id="module"><br> Lesson name<input type="text" id="lesson"><br>
-      <button id="open" onclick="document.getElementById('uselink').href='https://lms.wiseman.com.hk/lms/course/eb/lessons/'+document.getElementById('module').value.replace(/[^\w]/gi, '_').replace(/_{2,}/g,'_')+ '/eb03_'+ document.getElementById('lesson').value.replace(/[^\w]/gi, '_').replace(/_{2,}/g,'_')+'/course/course.exml'">Click to update link below</button>
-      <button id="open" onclick="document.getElementById('uselink').href='https://lms.wiseman.com.hk/lms/course/eb/lessons/'+document.getElementById('module').value.replace(/[^\w]/gi, '_').replace(/_{2,}/g,'_')+ '/eb03_'+ document.getElementById('lesson').value.replace(/[^\w]/gi, '_').replace(/_{2,}/g,'_')+'/course/course_app.exml'">Click to update link below(for mobile)</button>
-      <br><a target='_blank' id="uselink" href="">Encoded answer link</a> Copy the answer content to clipboard, paste in below, press button, get answer<br> Encoded data<br>
-      <textarea id="textarea"></textarea><br>
-      <button id="trigger">
-Click to get decoded result
-</button><br><button id="trigger2">
-Click to get decoded result(RW)
-</button><br>
-    </p>
+    <span>Module name</span>
+    <input class="c" id="module"><br>
+    <span>Lesson name</span>
+    <input class="c" id="lesson"><br>
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="open" onclick="window.open('https://lms.wiseman.com.hk/lms/course/eb/lessons/'+document.getElementById('module').value.replace(/[^\w]/gi, '_').replace(/_{2,}/g,'_')+ '/eb03_'+ document.getElementById('lesson').value.replace(/[^\w]/gi, '_').replace(/_{2,}/g,'_')+'/course/course.exml', '_blank')">Open encoded data</button>
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="open" onclick="window.open('https://lms.wiseman.com.hk/lms/course/eb/lessons/'+document.getElementById('module').value.replace(/[^\w]/gi, '_').replace(/_{2,}/g,'_')+ '/eb03_'+ document.getElementById('lesson').value.replace(/[^\w]/gi, '_').replace(/_{2,}/g,'_')+'/course/course_app.exml', '_blank')">Open encoded data(mobile)</button>
+    <br>
+    <span>Enter encoded data</span>
+    <input style="width: 90%;"type="text" id="textarea"><br>
+    <button id="trigger" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+Decode(writing+speaking)
+</button><button id="trigger2" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+Decode(Listening+reading)
+</button><br></p>
+
+<script type="text/javascript">
 
 
-
-	<script>
+    window.onload=function(){
+      
 	var xml;
-var xmldoc;
+	var xmldoc;
 
-document.getElementById('trigger').onclick = function() {
-  var temp;
-  xml = document.getElementById('textarea').value.replace('<?xml version="1.0" encoding="UTF-8"?>', "");
-  xmlDoc = new DOMParser().parseFromString(xml, "text/xml");
+	document.getElementById('trigger').onclick = function() {
+	  var temp;
+	  xml = document.getElementById('textarea').value.replace('<?xml version="1.0" encoding="UTF-8"?>', "");
+	  xmlDoc = new DOMParser().parseFromString(xml, "text/xml");
 
-  var seed = xmlDoc.getElementsByTagName("course")[0].getAttribute('seed');
-  var texts = xmlDoc.getElementsByTagName("text");
-  for (var i = 0; i < texts.length; i++) {
-    try {
-      var real = "<b>" + decrypt(texts[i].getAttribute('correct'), Number(seed)) + "</b>";
+	  var seed = xmlDoc.getElementsByTagName("course")[0].getAttribute('seed');
+	  var texts = xmlDoc.getElementsByTagName("text");
+	  for (var i = 0; i < texts.length; i++) {
+	    try {
+	      var real = "<b>" + decrypt(texts[i].getAttribute('correct'), Number(seed)) + "</b>";
 
-      var att = document.createAttribute("text");
-      att.value = real;
-      texts[i].setAttributeNode(att);
+	      var att = document.createAttribute("text");
+	      att.value = real;
+	      texts[i].setAttributeNode(att);
 
-    } catch (e) {
+	    } catch (e) {
+
+	    }
+	    document.getElementById('p').innerHTML += (texts[i].getAttribute('text') + '<br>')
+	  }
+
+
+	}
+	document.getElementById('trigger2').onclick = function() {
+	  xml = document.getElementById('textarea').value.replace('<?xml version="1.0" encoding="UTF-8"?>', "");
+	  xmlDoc = new DOMParser().parseFromString(xml, "text/xml");
+
+	  var seed = xmlDoc.getElementsByTagName("course")[0].getAttribute('seed');
+	  var texts = xmlDoc.getElementsByTagName("question");
+	  for (var i = 0; i < texts.length; i++) {
+	    try {
+	      var real = "<b>" + decrypt(texts[i].getAttribute('correct'), Number(seed)) + "</b>";
+
+	      var att = document.createAttribute("text");
+	      att.value = texts[i].getAttribute('text') + ": " + real;
+	      texts[i].setAttributeNode(att);
+
+	    } catch (e) {
+
+	    }
+	    document.getElementById('p').innerHTML += (texts[i].getAttribute('text') + '<br>')
+	  }
+
+
+
+	}
+
+	function decrypt(inputstring, seed) {
+	  var charset = [];
+
+	  charset[0] = "c";
+	  charset[1] = "3";
+	  charset[2] = "D";
+	  charset[3] = "1";
+	  charset[4] = "R";
+	  charset[5] = "F";
+	  charset[6] = "P";
+	  charset[7] = "9";
+	  charset[8] = "e";
+	  charset[9] = "M";
+	  charset[10] = "[";
+	  charset[11] = "U";
+	  charset[12] = "j";
+	  charset[13] = "I";
+	  charset[14] = "N";
+	  charset[15] = "f";
+	  charset[16] = "O";
+	  charset[17] = "Z";
+	  charset[18] = "i";
+	  charset[19] = "0";
+	  charset[20] = "Q";
+	  charset[21] = "g";
+	  charset[22] = "+";
+	  charset[23] = "m";
+	  charset[24] = "h";
+	  charset[25] = "k";
+	  charset[26] = "x";
+	  charset[27] = "S";
+	  charset[28] = "J";
+	  charset[29] = "5";
+	  charset[30] = "p";
+	  charset[31] = "*";
+	  charset[32] = " ";
+	  charset[33] = "u";
+	  charset[34] = "X";
+	  charset[35] = "8";
+	  charset[36] = "B";
+	  charset[37] = "}";
+	  charset[38] = "`";
+	  charset[39] = "-";
+	  charset[40] = "r";
+	  charset[41] = "s";
+	  charset[42] = ",";
+	  charset[43] = "L";
+	  charset[44] = "q";
+	  charset[45] = "A";
+	  charset[46] = "H";
+	  charset[47] = "@";
+	  charset[48] = "l";
+	  charset[49] = "n";
+	  charset[50] = "b";
+	  charset[51] = "V";
+	  charset[52] = "T";
+	  charset[53] = ".";
+	  charset[54] = "C";
+	  charset[55] = "{";
+	  charset[56] = "z";
+	  charset[57] = "4";
+	  charset[58] = "Y";
+	  charset[59] = "W";
+	  charset[60] = "t";
+	  charset[61] = "G";
+	  charset[62] = "v";
+	  charset[63] = "7";
+	  charset[64] = "2";
+	  charset[65] = "^";
+	  charset[66] = "/";
+	  charset[67] = "a";
+	  charset[68] = "w";
+	  charset[69] = "|";
+	  charset[70] = "d";
+	  charset[71] = "o";
+	  charset[72] = "_";
+	  charset[73] = "6";
+	  charset[74] = "\\";
+	  charset[75] = "y";
+	  charset[76] = "E";
+	  charset[77] = "~";
+	  charset[78] = "]";
+	  charset[79] = "K";
+
+
+	  var placeholder2;
+	  var placeholder3 = "";
+	  var placeholder4;
+	  var placeholder5;
+	  for (placeholder2 = 0; placeholder2 < inputstring.length; placeholder2++) {
+	    placeholder4 = inputstring.charCodeAt(placeholder2);
+	    if (placeholder4 == 32) {
+	      //current chaacter is space
+	      placeholder5 = 0;
+	    } else if (placeholder4 >= 42 && placeholder4 <= 57) {
+	      //special chars + number
+	      placeholder5 = placeholder4 - 41;
+	      //values possible: 1-16
+
+
+	    } else if (placeholder4 >= 64 && placeholder4 <= 126) {
+	      //mostly alphabets
+	      placeholder5 = placeholder4 - 47;
+	      //values possible: 17-79
+	    } else placeholder5 = -1;
+	    if (placeholder5 >= 0 && placeholder5 <= 79) {
+	      //good range
+	      placeholder5 += (placeholder2 + seed);
+	      placeholder5 = placeholder5 % 80;
+	      placeholder3 += charset[placeholder5];
+
+	    } else {
+	      //bad range
+	      placeholder3 += inputstring.charAt(placeholder2);
+	    }
+	  }
+	  return placeholder3
+	}
+
 
     }
-    document.getElementById('p').innerHTML += (texts[i].getAttribute('text') + '<br>')
-  }
 
+</script>
 
-
-
-}
-document.getElementById('trigger2').onclick = function() {
-  xml = document.getElementById('textarea').value.replace('<?xml version="1.0" encoding="UTF-8"?>', "");
-  xmlDoc = new DOMParser().parseFromString(xml, "text/xml");
-
-  var seed = xmlDoc.getElementsByTagName("course")[0].getAttribute('seed');
-  var texts = xmlDoc.getElementsByTagName("question");
-  for (var i = 0; i < texts.length; i++) {
-    try {
-      var real = "<b>" + decrypt(texts[i].getAttribute('correct'), Number(seed)) + "</b>";
-
-      var att = document.createAttribute("text");
-      att.value = texts[i].getAttribute('text') + ": " + real;
-      texts[i].setAttributeNode(att);
-
-    } catch (e) {
-
-    }
-    document.getElementById('p').innerHTML += (texts[i].getAttribute('text') + '<br>')
-  }
-
-
-
-
-}
-
-function decrypt(inputstring, seed) {
-  var charset = [];
-
-  charset[0] = "c";
-  charset[1] = "3";
-  charset[2] = "D";
-  charset[3] = "1";
-  charset[4] = "R";
-  charset[5] = "F";
-  charset[6] = "P";
-  charset[7] = "9";
-  charset[8] = "e";
-  charset[9] = "M";
-  charset[10] = "[";
-  charset[11] = "U";
-  charset[12] = "j";
-  charset[13] = "I";
-  charset[14] = "N";
-  charset[15] = "f";
-  charset[16] = "O";
-  charset[17] = "Z";
-  charset[18] = "i";
-  charset[19] = "0";
-  charset[20] = "Q";
-  charset[21] = "g";
-  charset[22] = "+";
-  charset[23] = "m";
-  charset[24] = "h";
-  charset[25] = "k";
-  charset[26] = "x";
-  charset[27] = "S";
-  charset[28] = "J";
-  charset[29] = "5";
-  charset[30] = "p";
-  charset[31] = "*";
-  charset[32] = " ";
-  charset[33] = "u";
-  charset[34] = "X";
-  charset[35] = "8";
-  charset[36] = "B";
-  charset[37] = "}";
-  charset[38] = "`";
-  charset[39] = "-";
-  charset[40] = "r";
-  charset[41] = "s";
-  charset[42] = ",";
-  charset[43] = "L";
-  charset[44] = "q";
-  charset[45] = "A";
-  charset[46] = "H";
-  charset[47] = "@";
-  charset[48] = "l";
-  charset[49] = "n";
-  charset[50] = "b";
-  charset[51] = "V";
-  charset[52] = "T";
-  charset[53] = ".";
-  charset[54] = "C";
-  charset[55] = "{";
-  charset[56] = "z";
-  charset[57] = "4";
-  charset[58] = "Y";
-  charset[59] = "W";
-  charset[60] = "t";
-  charset[61] = "G";
-  charset[62] = "v";
-  charset[63] = "7";
-  charset[64] = "2";
-  charset[65] = "^";
-  charset[66] = "/";
-  charset[67] = "a";
-  charset[68] = "w";
-  charset[69] = "|";
-  charset[70] = "d";
-  charset[71] = "o";
-  charset[72] = "_";
-  charset[73] = "6";
-  charset[74] = "\\";
-  charset[75] = "y";
-  charset[76] = "E";
-  charset[77] = "~";
-  charset[78] = "]";
-  charset[79] = "K";
-
-
-  var placeholder2;
-  var placeholder3 = "";
-  var placeholder4;
-  var placeholder5;
-  for (placeholder2 = 0; placeholder2 < inputstring.length; placeholder2++) {
-    placeholder4 = inputstring.charCodeAt(placeholder2);
-    if (placeholder4 == 32) {
-      //current chaacter is space
-      placeholder5 = 0;
-    } else if (placeholder4 >= 42 && placeholder4 <= 57) {
-      //special chars + number
-      placeholder5 = placeholder4 - 41;
-      //values possible: 1-16
-
-
-    } else if (placeholder4 >= 64 && placeholder4 <= 126) {
-      //mostly alphabets
-      placeholder5 = placeholder4 - 47;
-      //values possible: 17-79
-    } else placeholder5 = -1;
-    if (placeholder5 >= 0 && placeholder5 <= 79) {
-      //good range
-      placeholder5 += (placeholder2 + seed);
-      placeholder5 = placeholder5 % 80;
-      placeholder3 += charset[placeholder5];
-
-    } else {
-      //bad range
-      placeholder3 += inputstring.charAt(placeholder2);
-    }
-  }
-  return placeholder3
-}
-
-	</script>
   </body>
 
 </html>
