@@ -37,6 +37,8 @@
 Decode(writing+speaking)
 </button><button id="trigger2" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
 Decode(Listening+reading)
+</button><button id="trigger3" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+Decode(Listening+reading)(alternative)
 </button><br></p>
 
 <script type="text/javascript">
@@ -93,7 +95,29 @@ Decode(Listening+reading)
 
 
 	}
+    document.getElementById('trigger3').onclick = function() {
+	  xml = document.getElementById('textarea').value.replace('<?xml version="1.0" encoding="UTF-8"?>', "");
+	  xmlDoc = new DOMParser().parseFromString(xml, "text/xml");
 
+	  var seed = xmlDoc.getElementsByTagName("course")[0].getAttribute('seed');
+	  var texts = xmlDoc.getElementsByTagName("text");
+	  for (var i = 0; i < texts.length; i++) {
+	    try {
+	      var real = "<b>" + decrypt(texts[i].getAttribute('correct'), Number(seed)) + "</b>";
+
+	      var att = document.createAttribute("text");
+	      att.value = texts[i].getAttribute('text') + ": " + real;
+	      texts[i].setAttributeNode(att);
+
+	    } catch (e) {
+
+	    }
+	    document.getElementById('p').innerHTML += (texts[i].getAttribute('text') + '<br>')
+	  }
+
+
+
+	}
 	function decrypt(inputstring, seed) {
 	  var charset = [];
 
