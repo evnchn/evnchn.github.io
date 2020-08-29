@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WebSocket demo</title>
+        <style type="text/css">
+            body {
+                font-family: "Courier New", sans-serif;
+                text-align: center;
+            }
+            .buttons {
+                font-size: 4em;
+                display: flex;
+                justify-content: center;
+            }
+            .button {
+                line-height: 1;
+                padding: 2rem;
+                margin: 2rem;
+                border: medium solid;
+                min-height: 1em;
+                min-width: 1em;
+            }
+            .button {
+                cursor: pointer;
+                user-select: none;
+            }
+            .state {
+                font-size: 2em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="buttons">
+            <div timestamp="" class="one button">1</div>
+			<div timestamp="" class="two button">2</div>
+			<div timestamp="" class="three button">3</div>
+			<div timestamp="" class="four button">4</div>
+        </div>
+        <div class="state">
+            <span class="users">?</span> online
+        </div>
+        <script>
+            var one = document.querySelector('.one'),
+                two = document.querySelector('.two'),
+				three = document.querySelector('.three'),
+                four = document.querySelector('.four'),
+				arrayitems = [one, two, three, four],
+                users = document.querySelector('.users'),
+                websocket = new WebSocket("ws://evnchn.asuscomm.com:6789/");
+            one.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'one', timestamp: Date.now()}));
+            }
+			two.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'two', timestamp: Date.now()}));
+            }
+			three.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'three', timestamp: Date.now()}));
+            }
+		    four.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'four', timestamp: Date.now()}));
+            }
+
+            websocket.onmessage = function (event) {
+                data = JSON.parse(event.data);
+                switch (data.type) {
+					case 'state':
+						console.log(data);
+						one.setAttribute("timestamp", data.one);
+						two.setAttribute("timestamp", data.two);
+						three.setAttribute("timestamp", data.three);
+						four.setAttribute("timestamp", data.four);
+                        break;
+                    case 'users':
+                        users.textContent = (
+                            data.count.toString() + " user" +
+                            (data.count == 1 ? "" : "s"));
+                        break;
+                    default:
+                        console.error(
+                            "unsupported event", data);
+                }
+            };
+			setInterval(function(){ for (i = 0; i < arrayitems.length; i++) {
+			secondsaway = (Date.now() - parseInt(arrayitems[i].getAttribute("timestamp")))/1000
+			percentage = Math.min(50 + Math.pow(secondsaway*2, 4)*5, 100)
+			color = "hsl(0, 100%, " + percentage +"%)"
+			console.log(color)
+  arrayitems[i].style.backgroundColor = color
+} }, 100);
+        </script>
+    </body>
+</html>
