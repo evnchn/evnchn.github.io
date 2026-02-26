@@ -239,7 +239,7 @@
     overflow: hidden;
   }
   .optional-section.hidden { opacity: 0.3; max-height: 0; pointer-events: none; margin: 0; padding: 0; }
-  .optional-section.visible { opacity: 1; max-height: 1000px; }
+  .optional-section.visible { opacity: 1; max-height: 2000px; }
   .bond-summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -586,6 +586,23 @@
   </div>
   <div class="source">GEE Basic $500/mo = $6k/yr; free for non-commercial — <a href="https://cloud.google.com/earth-engine/pricing" target="_blank">GEE Pricing</a>; <a href="https://link.springer.com/article/10.1007/s41651-024-00175-3" target="_blank">MANGLEE Tool (2024)</a></div>
 
+  <details style="margin-top: 14px;">
+    <summary>&#9881; Data Processing Pipeline</summary>
+    <div style="padding: 8px 0; font-size: 0.85em; color: var(--text-secondary); line-height: 1.7;">
+      <p><strong>1. NDVI / Vegetation Index Computation</strong> — Compute NDVI, EVI, CMRI from multispectral bands to assess mangrove health. Pre-computed indices available via <a href="https://www.earthdata.nasa.gov/data/alerts-outages/harmonized-landsat-sentinel-2-vegetation-indices-data-products-released" target="_blank">NASA HLS-VI</a> (free). GEE or Python+Rasterio process on-demand at no cost.</p>
+      <p><strong>2. Land Cover Classification</strong> — Random Forest or SVM to classify mangrove vs. non-mangrove. GEE has built-in classifiers (free for non-commercial). Deep learning (U-Net) achieves 96%+ accuracy but needs GPU — training ~$10-30/run on cloud spot instances. — <a href="https://www.nature.com/articles/s41598-025-12689-x" target="_blank">Nature 2025</a></p>
+      <p><strong>3. Change Detection</strong> — Compare classified extent maps across time to quantify mangrove gain/loss. <a href="https://www.globalmangrovewatch.org/" target="_blank">Global Mangrove Watch</a> provides free annual maps (1996-2020). Custom detection via GEE at $0. — <a href="https://link.springer.com/article/10.1007/s11270-023-06788-6" target="_blank">Springer Review 2023</a></p>
+      <p><strong>4. Time-Series Trend Analysis</strong> — Sen's Slope + Mann-Kendall test on multi-year NDVI to detect degradation/recovery. Lightweight; free via Python (<a href="https://pypi.org/project/pymannkendall/" target="_blank">pymannkendall</a>) or R. — <a href="https://www.frontiersin.org/journals/environmental-science/articles/10.3389/fenvs.2024.1416450/full" target="_blank">Frontiers 2024</a></p>
+      <p style="margin-top: 6px; font-style: italic;">Note: "Cloud Processing" above covers GEE/AWS compute infrastructure. The field below covers additional analytical costs (GPU for deep learning, specialized software) beyond GEE's free tier.</p>
+    </div>
+    <div class="field-3col">
+      <label>Analytical Processing (ML / deep learning)</label>
+      <input type="number" id="satProcessing" value="0" step="100" min="0">
+      <span class="unit">USD/yr</span>
+    </div>
+    <div class="source">$0 with GEE free tier + open-source; $200-2,000/yr with cloud GPU for deep learning — <a href="https://cloud.google.com/compute/gpus-pricing" target="_blank">GCP GPU Pricing</a>; <a href="https://www.mdpi.com/2072-4292/17/13/2290" target="_blank">GEE Mangrove Review (MDPI 2025)</a></div>
+  </details>
+
   <div class="divider"></div>
   <div class="result-row subtotal">
     <span>Satellite Cost / Project / Year</span>
@@ -657,6 +674,23 @@
   </div>
   <div class="source">Housing, solar, mounting, labor: $200-500/node — <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9185509/" target="_blank">Low-Cost AI Buoy (PMC 2022)</a></div>
 
+  <details style="margin-top: 14px;">
+    <summary>&#9881; Data Processing Pipeline</summary>
+    <div style="padding: 8px 0; font-size: 0.85em; color: var(--text-secondary); line-height: 1.7;">
+      <p><strong>1. Time-Series Database</strong> — Store sensor readings (~100 sensors × 96 readings/day = ~3.5M points/yr, ~1-2 GB). <a href="https://www.influxdata.com/influxdb-pricing/" target="_blank">InfluxDB OSS</a> (free, self-hosted) or <a href="https://aws.amazon.com/timestream/pricing/" target="_blank">AWS Timestream</a> ($25-75/yr at this scale).</p>
+      <p><strong>2. Real-Time Anomaly Detection</strong> — Threshold alerts and statistical detection on pH, DO, temperature, salinity. <a href="https://thingsboard.io/" target="_blank">ThingsBoard CE</a> (free) has built-in rule chains. Python libraries (<a href="https://arundo-adtk.readthedocs-hosted.com/" target="_blank">ADTK</a>, PyOD) add ML-based detection at $0. — <a href="https://www.mdpi.com/1424-8220/23/20/8613" target="_blank">MDPI Sensors 2023</a></p>
+      <p><strong>3. Dashboard &amp; Visualization</strong> — Real-time gauges, maps, charts. <a href="https://thingsboard.io/" target="_blank">ThingsBoard CE</a> or <a href="https://grafana.com/pricing/" target="_blank">Grafana OSS</a> — both free, self-hosted. Grafana Cloud free tier: 3 users, 14-day retention.</p>
+      <p><strong>4. ML Predictive Analytics</strong> — LSTM models predict DO/pH 6-24h ahead for proactive intervention (e.g., activating aerators). Training takes minutes on a small VPS for 100 sensors. — <a href="https://www.nature.com/articles/s41598-025-96941-4" target="_blank">Nature 2025</a>; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11151732/" target="_blank">PMC 2024</a></p>
+      <p><strong>5. Alert System</strong> — SMS/email/Telegram on threshold breaches. <a href="https://aws.amazon.com/sns/pricing/" target="_blank">AWS SNS</a>: email free (1,000/mo), SMS ~$35/yr. Telegram Bot API: free. — <a href="https://www.twilio.com/en-us/pricing/messaging" target="_blank">Twilio Pricing</a></p>
+    </div>
+    <div class="field-3col">
+      <label>Data Platform (DB + dashboard + alerts)</label>
+      <input type="number" id="iotProcessing" value="500" step="100" min="0">
+      <span class="unit">USD/yr</span>
+    </div>
+    <div class="source">Self-hosted ThingsBoard CE + InfluxDB + Grafana on VPS: $120-240/yr; AWS managed stack: ~$250/yr; ThingsBoard PE Cloud: $1,788/yr — <a href="https://thingsboard.io/pricing/" target="_blank">ThingsBoard</a>; <a href="https://aws.amazon.com/iot-core/pricing/" target="_blank">AWS IoT</a></div>
+  </details>
+
   <div class="divider"></div>
   <div class="result-row subtotal">
     <span>IoT Capital Cost / Project</span>
@@ -696,6 +730,23 @@
     <span class="unit">USD/yr</span>
   </div>
   <div class="source">Estimated from JALA/iQShrimp subscription models — <a href="https://www.shrimpinsights.com/advertorial/shrimp-farming-digital-age-insights-eruvaka" target="_blank">Shrimp Insights</a></div>
+
+  <details style="margin-top: 14px;">
+    <summary>&#9881; Data Processing Pipeline</summary>
+    <div style="padding: 8px 0; font-size: 0.85em; color: var(--text-secondary); line-height: 1.7;">
+      <p><strong>1. Harvest Aggregation &amp; FCR Tracking</strong> — Centralize weight, survival rate, feed conversion ratio, biomass across ponds. Included in <a href="https://jala.tech/" target="_blank">JALA</a>/iQShrimp subscriptions (covered by Operating Cost above).</p>
+      <p><strong>2. Growth Curve Modeling</strong> — Predict optimal harvest timing and feed requirements. Random Forest achieves 97.8% accuracy. Built into JALA Pro and iQShrimp. — <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11408142/" target="_blank">PMC 2024</a>; <a href="https://www.mckinsey.com/industries/agriculture/our-insights/evolving-ecosystems-advanced-analytics-in-shrimp-aquaculture" target="_blank">McKinsey</a></p>
+      <p><strong>3. Benchmarking Analytics</strong> — Compare FCR, yield/ha, cost/kg across ponds, sites, seasons. <a href="https://manolinaqua.com/watershed/aquaculture-benchmarking" target="_blank">Manolin Watershed</a> (free researcher tier) or JALA analytics (included in Pro). — <a href="https://www.mdpi.com/2071-1050/13/11/5839" target="_blank">MDPI 2021</a></p>
+      <p><strong>4. Traceability &amp; Supply Chain</strong> — Blockchain-backed provenance for bond verification. <a href="https://www.ibm.com/blockchain/solutions/food-trust" target="_blank">IBM Food Trust</a>: free for uploaders, ~$1,200/yr for Trace module. — <a href="https://www.ledgerinsights.com/sustainable-shrimp-partnership-blockchain-traceability-ibm-food-trust/" target="_blank">Ledger Insights</a></p>
+      <p><strong>5. Bond Investor Reporting</strong> — Automated ESG/KPI reports. Custom scripts (free) or ESG platforms ($31K+/yr for enterprise). JALA includes basic reports. — <a href="https://jala.tech/blog/cultivation-tips/jala-app-features-for-shrimp-cultivation" target="_blank">JALA Features</a></p>
+    </div>
+    <div class="field-3col">
+      <label>Analytics &amp; Reporting Platform</label>
+      <input type="number" id="yieldProcessing" value="0" step="500" min="0">
+      <span class="unit">USD/yr</span>
+    </div>
+    <div class="source">$0 if included in SaaS above; $1,200/yr for IBM Food Trust traceability; $3,000-8,000/yr mid-tier — <a href="https://jala.tech/pricing" target="_blank">JALA Pricing</a>; <a href="https://www.ibm.com/blockchain/solutions/food-trust" target="_blank">IBM Food Trust</a></div>
+  </details>
 
   <div class="divider"></div>
   <div class="result-row subtotal">
@@ -750,6 +801,29 @@
       <span class="unit">USD/yr</span>
     </div>
     <div class="source">BirdNET open-source, free — <a href="https://birdnet.cornell.edu/analyzer/" target="_blank">Cornell BirdNET</a>; Commercial: £400-800/recorder/yr — <a href="https://carbonrewild.com/data-analysis/" target="_blank">Carbon Rewild</a></div>
+
+    <details style="margin-top: 14px;">
+      <summary>&#9881; Data Processing Pipeline</summary>
+      <div style="padding: 8px 0; font-size: 0.85em; color: var(--text-secondary); line-height: 1.7;">
+        <p><strong>1. Species Identification (AI)</strong> — <a href="https://birdnet.cornell.edu/" target="_blank">BirdNET</a> identifies 6,000+ bird species (free, ~72-85% precision). <a href="https://rfcx.org/ecoacoustics" target="_blank">Arbimon</a> (Rainforest Connection): free cloud platform, 3,800+ species, unlimited storage. Paid: <a href="https://www.wildlifeacoustics.com/products/kaleidoscope-pro" target="_blank">Kaleidoscope Pro</a> $399/yr. — <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10459908/" target="_blank">BirdNET Accuracy (PMC 2023)</a></p>
+        <p><strong>2. Acoustic Indices</strong> — Compute ACI, NDSI, biophony index to quantify soundscape biodiversity. <a href="https://scikit-maad.github.io/" target="_blank">scikit-maad</a> (Python, 50+ indices, free) or <a href="https://cran.r-project.org/web/packages/soundecology/vignettes/intro.html" target="_blank">soundecology</a> (R, free). — <a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13711" target="_blank">Methods in Ecology 2021</a></p>
+        <p><strong>3. Data Storage</strong> — Recorders generate ~1-2 GB/day each (48 kHz, duty-cycled). 10 units × 12 months ≈ 4-7 TB/yr. <a href="https://rfcx.org/ecoacoustics" target="_blank">Arbimon</a>: free unlimited storage. <a href="https://aws.amazon.com/s3/storage-classes/glacier/" target="_blank">AWS Glacier</a>: ~$60/yr for 5 TB. — <a href="https://www.openacousticdevices.info/audiomoth" target="_blank">AudioMoth Specs</a></p>
+        <p><strong>4. Expert Validation</strong> — AI detections require sub-sample review by ecologist (~4 hrs/wk, 40 wks = 160 hrs). Largest cost driver for bioacoustics. — <a href="https://www.salary.com/research/salary/hiring/wildlife-ecologist-salary" target="_blank">Ecologist Salary Data</a></p>
+        <p><strong>5. Soundscape Trend Analysis</strong> — Track acoustic indices over time to measure restoration success. Deep learning correlates with biodiversity recovery. — <a href="https://www.nature.com/articles/s41467-023-41693-w" target="_blank">Nature Comms 2023</a></p>
+      </div>
+      <div class="field-3col">
+        <label>Data Storage (cloud archive)</label>
+        <input type="number" id="bioStorage" value="100" step="50" min="0">
+        <span class="unit">USD/yr</span>
+      </div>
+      <div class="source">Arbimon: free; AWS Glacier: ~$60/yr for 5 TB; local drives: ~$80 one-time — <a href="https://rfcx.org/ecoacoustics" target="_blank">Arbimon</a>; <a href="https://aws.amazon.com/s3/storage-classes/glacier/" target="_blank">AWS Glacier</a></div>
+      <div class="field-3col">
+        <label>Expert Validation (ecologist review)</label>
+        <input type="number" id="bioValidation" value="5000" step="1000" min="0">
+        <span class="unit">USD/yr</span>
+      </div>
+      <div class="source">Light sub-sample: ~160 hrs × $30-60/hr = $4,800-9,600/yr; $0 if AI-only — <a href="https://www.salary.com/research/salary/hiring/wildlife-ecologist-salary" target="_blank">Salary.com</a>; <a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.14194" target="_blank">Acoustic Study Design (MEE 2023)</a></div>
+    </details>
 
     <div class="divider"></div>
     <div class="result-row subtotal">
@@ -913,6 +987,33 @@
       <div id="droneRecommendation" style="font-size:0.85em; padding:6px 10px; border-radius:6px; background:var(--primary-light); color:var(--primary-dark); font-weight:500;"></div>
     </div>
 
+    <details style="margin-top: 14px;">
+      <summary>&#9881; Data Processing Pipeline</summary>
+      <div style="padding: 8px 0; font-size: 0.85em; color: var(--text-secondary); line-height: 1.7;">
+        <p><strong>1. Photogrammetry / Orthomosaic</strong> — Stitch overlapping images into georeferenced maps + DSM/DTM. <a href="https://www.opendronemap.org/" target="_blank">OpenDroneMap</a> (free); <a href="https://store.dji.com/product/dji-terra-subscription" target="_blank">DJI Terra Pro</a> (~$1,540/yr); <a href="https://www.pix4d.com/pricing/pix4dmapper/" target="_blank">Pix4Dmapper</a> (~$3,500/yr); <a href="https://www.agisoft.com/buy/licensing-options/" target="_blank">Agisoft Metashape</a> (~$3,499 perpetual).</p>
+        <p><strong>2. NDVI Map Generation</strong> — Process multispectral bands into vegetation health maps. <a href="https://www.pix4d.com/pricing/pix4dfields/" target="_blank">Pix4Dfields</a> (~$1,650/yr) or QGIS raster calculator (free). — <a href="https://mapscaping.com/calculating-ndvi-using-qgis/" target="_blank">QGIS NDVI Tutorial</a></p>
+        <p><strong>3. LiDAR Point Cloud → CHM</strong> — Classify ground/canopy returns, generate Canopy Height Model (DSM − DEM). <a href="https://www.cloudcompare.org/" target="_blank">CloudCompare</a> (free); R + <a href="https://github.com/r-lidar/lidR" target="_blank">lidR</a> (free); <a href="https://terrasolid.com/pricing/" target="_blank">Terrasolid UAV</a> (~$2,850/yr). — <a href="https://tgoodbody.github.io/lidRtutorial/04_chm.html" target="_blank">lidR CHM Tutorial</a></p>
+        <p><strong>4. Above-Ground Biomass</strong> — Apply Komiyama/Chave allometric equations to CHM-derived tree heights. Carbon = AGB × 0.47. R <a href="https://cran.r-project.org/web/packages/BIOMASS/" target="_blank">BIOMASS package</a> (free). — <a href="https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2019.00784/full" target="_blank">Frontiers 2019</a></p>
+        <p><strong>5. Change Detection</strong> — Multi-temporal CHM differencing or C2C point cloud comparison. CloudCompare M3C2 algorithm (free). — <a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2021.1966527" target="_blank">Taylor &amp; Francis 2021</a></p>
+        <p style="margin-top: 6px; font-style: italic;">Covers the full analytical pipeline (NDVI, LiDAR, biomass, change detection) shared across all projects. In buy mode, "Processing Software" above covers photogrammetry stitching separately.</p>
+      </div>
+      <div class="field-3col">
+        <label>Analytical Processing Tier</label>
+        <select id="droneProcessTier" onchange="updateDroneProcessCost()">
+          <option value="free">Open-Source (ODM + QGIS + R, $0/yr)</option>
+          <option value="mid" selected>Mid-Range (DJI Terra + free LiDAR tools, ~$1,500/yr)</option>
+          <option value="pro">Professional (Pix4D + Terrasolid, ~$6,000/yr)</option>
+        </select>
+        <span class="unit"></span>
+      </div>
+      <div class="field-3col">
+        <label>Analytical Processing Cost (shared)</label>
+        <input type="number" id="droneProcessCost" value="1500" step="500" min="0">
+        <span class="unit">USD/yr</span>
+      </div>
+      <div class="source">Open-source: $0; DJI Terra $1,540/yr; Pix4D $3,500 + Terrasolid $2,850/yr — <a href="https://www.opendronemap.org/" target="_blank">ODM</a>; <a href="https://store.dji.com/product/dji-terra-subscription" target="_blank">DJI Terra</a>; <a href="https://www.pix4d.com/pricing/pix4dmapper/" target="_blank">Pix4D</a></div>
+    </details>
+
     <details>
       <summary>Why drones for carbon credits?</summary>
       <div style="font-size: 0.85em; color: var(--text-secondary); padding: 8px 0; line-height: 1.6;">
@@ -992,6 +1093,23 @@
       <span class="unit"></span>
     </div>
     <div class="source">VCS verification typically every 5 years; VM0033 crediting period up to 30 years — <a href="https://verra.org/methodologies/vm0033-methodology-for-tidal-wetland-and-seagrass-restoration-v2-1/" target="_blank">Verra VM0033</a></div>
+
+    <details style="margin-top: 14px;">
+      <summary>&#9881; Data Processing Pipeline</summary>
+      <div style="padding: 8px 0; font-size: 0.85em; color: var(--text-secondary); line-height: 1.7;">
+        <p><strong>1. Carbon Stock Calculation</strong> — Convert lab results (OC%, bulk density) to Mg C/ha using <a href="https://www.cifor-icraf.org/publications/pdf_files/WPapers/WP86CIFOR.pdf" target="_blank">CIFOR Kauffman &amp; Donato</a> formula. R or Python scripts (free). — <a href="https://decode6.org/articles/calculate-soil-carbon-stock/" target="_blank">Formula Guide</a></p>
+        <p><strong>2. Geostatistical Interpolation</strong> — Kriging to extrapolate point samples across the project area. R <a href="https://cran.r-project.org/web/packages/gstat/gstat.pdf" target="_blank">gstat</a> (free) or <a href="https://geostat-framework.readthedocs.io/projects/pykrige/en/stable/" target="_blank">PyKrige</a> (free). ArcGIS Geostatistical Analyst: ~$2,000-4,000/yr. — <a href="https://www.mdpi.com/1999-4907/13/8/1185" target="_blank">MDPI Forests 2022</a></p>
+        <p><strong>3. Uncertainty Quantification</strong> — Verra VCS requires 90% CI; if half-width &gt;10% of mean, conservativeness deduction applies. Monte Carlo / bootstrap via R/Python (free). — <a href="https://verra.org/methodologies/vm0033-methodology-for-tidal-wetland-and-seagrass-restoration-v2-1/" target="_blank">VM0033</a></p>
+        <p><strong>4. Database Management</strong> — Store multi-year core data with spatial metadata. <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> + PostGIS (free) following <a href="https://data.cifor.org/dataset.xhtml?persistentId=doi:10.17528/CIFOR/DATA.00262" target="_blank">CIFOR SWAMP</a> schema. VM0033 requires 2+ year retention beyond crediting period.</p>
+        <p><strong>5. MRV Reporting</strong> — Verra-compliant monitoring reports. PDD development: $30K-150K (shared across bond). VVB verification: $30K-50K per cycle (~every 5 yrs). Issuance fee: $0.20/VCU. — <a href="https://verra.org/programs/verified-carbon-standard/area-of-focus-blue-carbon/" target="_blank">Verra Blue Carbon</a>; <a href="https://bcct.naturebase.org/methodology" target="_blank">TNC Blue Carbon Cost Tool</a></p>
+      </div>
+      <div class="field-3col">
+        <label>Data Processing &amp; Analysis</label>
+        <input type="number" id="soilProcessing" value="2000" step="500" min="0">
+        <span class="unit">USD/event</span>
+      </div>
+      <div class="source">Analyst time for kriging + uncertainty + carbon calc: $2,000-15,000/event; $0 software with R/Python — <a href="https://soilmapper.org/SOC-chapter.html" target="_blank">Predictive Soil Mapping</a>; <a href="https://github.com/whrc/Mangrove-Soil-Carbon" target="_blank">WHRC Mangrove Soil Carbon (GitHub)</a></div>
+    </details>
 
     <details>
       <summary>Why soil carbon sampling matters</summary>
@@ -1323,6 +1441,13 @@ function updateDroneAcqMode() {
   recalc();
 }
 
+function updateDroneProcessCost() {
+  const tier = $('droneProcessTier').value;
+  const costs = { free: 0, mid: 1500, pro: 6000 };
+  $('droneProcessCost').value = costs[tier];
+  recalc();
+}
+
 // ===== TOGGLES =====
 let bioEnabled = true, droneEnabled = true, soilEnabled = true;
 
@@ -1370,19 +1495,20 @@ function recalc() {
   const satImageryCost = val('satCostKm2') * satAreaKm2 * val('satFreq');
   const satGIS = val('gisCost');
   const satCloud = val('cloudCost');
-  const satAnnual = satImageryCost + satGIS + satCloud;
+  const satProcessingCost = val('satProcessing');
+  const satAnnual = satImageryCost + satGIS + satCloud + satProcessingCost;
   $('satTotal').textContent = fmt(satAnnual);
 
   // --- IoT ---
   const iotNodes = Math.ceil(haPerProj * val('iotDensity'));
   const iotCapital = iotNodes * (val('iotNodeCost') + val('iotDeploy')) + val('loraCount') * val('loraCost');
-  const iotAnnual = iotNodes * val('iotMaint') + val('ttiCost');
+  const iotAnnual = iotNodes * val('iotMaint') + val('ttiCost') + val('iotProcessing');
   $('iotCapTotal').textContent = fmt(iotCapital);
   $('iotOpTotal').textContent = fmt(iotAnnual) + '/yr';
 
   // --- Yield ---
   const yieldCap = val('yieldCapital');
-  const yieldAnn = val('yieldAnnual');
+  const yieldAnn = val('yieldAnnual') + val('yieldProcessing');
   $('yieldTotal').textContent = fmt(yieldAnn) + '/yr' + (yieldCap > 0 ? ' + ' + fmt(yieldCap) + ' capital' : '');
 
   // --- Bioacoustic ---
@@ -1390,7 +1516,7 @@ function recalc() {
   if (bioEnabled) {
     const bioUnits = Math.ceil(mangroveHa * val('bioDensity'));
     bioCap = bioUnits * val('bioCostUnit');
-    bioAnn = val('bioProcessing');
+    bioAnn = val('bioProcessing') + val('bioStorage') + val('bioValidation');
     $('bioCapTotal').textContent = fmt(bioCap) + ' (' + bioUnits + ' units)';
     $('bioOpTotal').textContent = fmt(bioAnn) + '/yr';
   }
@@ -1455,15 +1581,16 @@ function recalc() {
       useBuy = mode === 'buy';
     }
 
+    const droneProcessShared = val('droneProcessCost') / numProj;
     if (useBuy) {
       droneCap = buyCapPerProj;
-      droneAnn = (annualOps / numProj) + pilotPerProj;
+      droneAnn = (annualOps / numProj) + pilotPerProj + droneProcessShared;
       $('droneTotal').textContent = fmt(droneAnn) + '/yr (buy)';
       $('droneCapTotal').textContent = fmt(droneCap);
       $('droneCapRow').style.display = '';
     } else {
       droneCap = 0;
-      droneAnn = hireAnnPerProj;
+      droneAnn = hireAnnPerProj + droneProcessShared;
       $('droneTotal').textContent = fmt(droneAnn) + '/yr (hire)';
       $('droneCapRow').style.display = 'none';
     }
@@ -1480,9 +1607,10 @@ function recalc() {
     const shipCost = val('soilShipCost');
     const eventCost = labCost + fieldCost + shipCost;
     const freq = parseFloat($('soilFrequency').value);
-    soilAnn = eventCost / freq;
-    soilCap = eventCost; // baseline sampling as capital cost
-    $('soilEventTotal').textContent = fmt(eventCost) + ' (' + totalSamples + ' samples)';
+    const soilProcessCost = val('soilProcessing');
+    soilAnn = (eventCost + soilProcessCost) / freq;
+    soilCap = eventCost + soilProcessCost; // baseline sampling + processing as capital cost
+    $('soilEventTotal').textContent = fmt(eventCost + soilProcessCost) + ' (' + totalSamples + ' samples + analysis)';
     $('soilAnnualTotal').textContent = fmt(soilAnn) + '/yr (every ' + freq + ' yrs)';
   }
 
@@ -1622,6 +1750,15 @@ function exportSummary() {
     'Remaining for Restoration: ' + $('metricRemaining').textContent,
     '',
     'Optional modules: Bioacoustic=' + (bioEnabled ? 'ON' : 'OFF') + ', Drone=' + (droneEnabled ? 'ON (' + $('droneAcqMode').value + ')' : 'OFF') + ', Soil Carbon=' + (soilEnabled ? 'ON' : 'OFF'),
+    '',
+    '--- Processing Costs ---',
+    'Satellite Analytical Processing: $' + val('satProcessing') + '/yr',
+    'IoT Data Platform: $' + val('iotProcessing') + '/yr',
+    'Yield Analytics & Reporting: $' + val('yieldProcessing') + '/yr',
+    'Bioacoustic Storage: $' + val('bioStorage') + '/yr' + (bioEnabled ? '' : ' (disabled)'),
+    'Bioacoustic Expert Validation: $' + val('bioValidation') + '/yr' + (bioEnabled ? '' : ' (disabled)'),
+    'Drone Analytical Processing: $' + val('droneProcessCost') + '/yr (shared)' + (droneEnabled ? '' : ' (disabled)'),
+    'Soil Data Processing: $' + val('soilProcessing') + '/event' + (soilEnabled ? '' : ' (disabled)'),
   ];
   const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
   const a = document.createElement('a');
@@ -1714,6 +1851,22 @@ recalc();
 <div class="grid" style="margin-top: 24px;">
 <div class="card full-width" style="border-left: 4px solid var(--warn); background: #fffdf5;">
   <h2 style="color: var(--warn);"><span class="icon">&#128221;</span> Changelog</h2>
+
+  <div style="margin-bottom: 14px;">
+    <strong style="font-size: 0.9em;">2026-02-26 — Data Processing Pipeline Subsections</strong>
+  </div>
+
+  <div style="font-size: 0.88em; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">
+    <p>Added a collapsible <strong>"Data Processing Pipeline"</strong> subsection within each of the 6 data source cards. Each subsection describes 5 processing steps required to turn raw data into actionable outputs, with hyperlinked sources for auditability. New cost input fields are wired into the grand summary calculations:</p>
+    <ul style="margin: 6px 0 0 20px;">
+      <li><strong>Satellite:</strong> NDVI computation, land cover classification (RF/U-Net), change detection, time-series trend analysis. Added "Analytical Processing" field ($0 default — GEE free tier covers most needs).</li>
+      <li><strong>IoT Sensors:</strong> Time-series DB (InfluxDB), anomaly detection (ThingsBoard CE), dashboard (Grafana), ML prediction (LSTM), alerts (Telegram/SNS). Added "Data Platform" field ($500/yr default — self-hosted open-source stack).</li>
+      <li><strong>Shrimp Yield:</strong> Harvest aggregation, growth modeling, benchmarking, blockchain traceability (IBM Food Trust), bond reporting. Added "Analytics &amp; Reporting" field ($0 default — included in SaaS subscription).</li>
+      <li><strong>Bioacoustic:</strong> Species ID (BirdNET/Arbimon free), acoustic indices (scikit-maad), data storage (4-7 TB/yr), expert validation, soundscape analysis. Added "Data Storage" ($100/yr) and "Expert Validation" ($5,000/yr) fields.</li>
+      <li><strong>Drone:</strong> Photogrammetry (ODM/Pix4D), NDVI processing, LiDAR→CHM, biomass estimation (allometric), change detection. Added shared "Analytical Processing" tier selector and cost field ($1,500/yr default — applies to both buy and hire modes).</li>
+      <li><strong>Soil Carbon:</strong> Carbon stock calculation (CIFOR protocol), geostatistical interpolation (kriging), uncertainty quantification (VCS 90% CI), database management, MRV reporting. Added "Data Processing &amp; Analysis" field ($2,000/event default).</li>
+    </ul>
+  </div>
 
   <div style="margin-bottom: 14px;">
     <strong style="font-size: 0.9em;">2026-02-26 — Drone Buy vs Hire Comparison</strong>
