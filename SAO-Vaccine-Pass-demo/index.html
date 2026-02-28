@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    </head>
+    <style>
+      html,
+      body {
+        width: 100vw;
+        margin: 0;
+        background-color: #D8D8D8; 
+		height: 100%;
+      }
+
+      #top,
+      #bottom {
+        width: 100vw;
+        display: block;
+      }
+
+      canvas {
+        image-rendering: optimizeSpeed;
+        /* STOP SMOOTHING, GIVE ME SPEED  */
+        image-rendering: -moz-crisp-edges;
+        /* Firefox                        */
+        image-rendering: -o-crisp-edges;
+        /* Opera                          */
+        image-rendering: -webkit-optimize-contrast;
+        /* Chrome (and eventually Safari) */
+        image-rendering: pixelated;
+        /* Universal support since 2021   */
+        image-rendering: optimize-contrast;
+        /* CSS3 Proposed                  */
+        -ms-interpolation-mode: nearest-neighbor;
+        /* IE8+                           */
+      }
+	  /* from https://stackoverflow.com/questions/14068103/disable-antialising-when-scaling-images */
+
+      #qrcode-wrap {
+        flex-grow: 1;
+        display: flex;
+        align-content: center;
+        flex-wrap: wrap;
+        margin: 5vw;
+      }
+
+      #flexboxwrapper {
+        display: flex;
+		height: 100%; 
+        flex-direction: column;
+      }
+
+      #my-img {
+        border: 5vw solid white;
+        max-width: 90vw;
+        max-height: 90vh;
+        width: 90vw;
+        background-color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="flexboxwrapper">
+      <div id="top-wrap">
+        <img id="top" src="Asset1-up.svg"/>
+        <!--<img id="top" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMTMwNSAyNzYiPjxkZWZzPjxzdHlsZT4uY2xzLTF7ZmlsbDojZDhkOGQ4O30uY2xzLTJ7ZmlsbDp1cmwoI2xpbmVhci1ncmFkaWVudCk7fS5jbHMtM3tmaWxsOnVybCgjbGluZWFyLWdyYWRpZW50LTIpO30uY2xzLTR7ZmlsbDojNGQ0ZDRkO308L3N0eWxlPjxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB4MT0iNjUyLjUiIHkxPSI2OTcuODg1ODMiIHgyPSI2NTIuNSIgeTI9IjY1NS4zODU4MyIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAtMSwgMCwgOTMxLjM4NTgzKSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzA0MDQwNCIgc3RvcC1vcGFjaXR5PSIwLjIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwNDA0MDQiIHN0b3Atb3BhY2l0eT0iMCIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJsaW5lYXItZ3JhZGllbnQtMiIgeDE9IjY1Mi41IiB5MT0iOTMxLjM4NTgzIiB4Mj0iNjUyLjUiIHkyPSI2OTguMzg1ODMiIGdyYWRpZW50VHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgLTEsIDAsIDkzMS4zODU4MykiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNlNGU0ZTQiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmOWY5ZjkiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIj48ZyBpZD0iTGF5ZXJfMS0yIiBkYXRhLW5hbWU9IkxheWVyIDEiPjxyZWN0IGNsYXNzPSJjbHMtMSIgd2lkdGg9IjEzMDUiIGhlaWdodD0iMjc2Ii8+PHJlY3QgY2xhc3M9ImNscy0yIiB5PSIyMzMuNSIgd2lkdGg9IjEzMDUiIGhlaWdodD0iNDIuNSIvPjxyZWN0IGNsYXNzPSJjbHMtMyIgd2lkdGg9IjEzMDUiIGhlaWdodD0iMjMzIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNNDU0LjgzOTg0LDg1LjE2MTcxbDQuMjIzNjQsNTguOTM5OTRoMy44Mzk4NEw0NjcuMTI3LDg1LjE2MTcxaDguMjU1MzdsLTQuNzk5OCw2Ny4xOTUzMUg0NTEuMzg0MjhsLTQuNzk5ODEtNjcuMTk1MzFaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNNDgxLjE0NCwxMjUuMTkxYTUuNzc2NDcsNS43NzY0NywwLDAsMSw1Ljc1OTI4LTUuNzU5NzZoOS45ODM0di0zLjY0NzQ2bC0xNS43NDI2OC0zLjE2OHYtOC4yNTUzN2wxOC4xNDI1OCwzLjY0Nzk0YTcuNjY5MjIsNy42NjkyMiwwLDAsMSw1Ljg1NTQ3LDcuMDA3MzNWMTUyLjM1N0g0ODYuOTAzMzJhNS43NzY0OCw1Ljc3NjQ4LDAsMCwxLTUuNzU5MjgtNS43NTk3N1ptMTUuNzQyNjgsMTguOTEwNjV2LTE2LjQxNWgtNy40ODczMXYxNi40MTVaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNNTEwLjkwMzMyLDExMC4xMjAyYTUuNzc2NDcsNS43NzY0NywwLDAsMSw1Ljc1OTI4LTUuNzU5NzZoMTguMjM4Nzd2MTQuMzk4OTJINTI2LjY0NnYtNi4xNDM1NWgtNy40ODczMXYzMS40ODU4NEg1MjYuNjQ2di02LjE0MzU2aDguMjU1Mzd2OC42MzkxNmE1Ljc3NjQ4LDUuNzc2NDgsMCwwLDEtNS43NTkyOCw1Ljc1OTc3SDUxNi42NjI2YTUuNzc2NDgsNS43NzY0OCwwLDAsMS01Ljc1OTI4LTUuNzU5NzdaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNNTQwLjY2MjYsMTEwLjEyMDJhNS43NzY0Niw1Ljc3NjQ2LDAsMCwxLDUuNzU5MjgtNS43NTk3NmgxOC4yMzg3NnYxNC4zOTg5MmgtOC4yNTUzN3YtNi4xNDM1NUg1NDguOTE4djMxLjQ4NTg0aDcuNDg3M3YtNi4xNDM1Nmg4LjI1NTM3djguNjM5MTZhNS43NzY0Nyw1Ljc3NjQ3LDAsMCwxLTUuNzU5MjcsNS43NTk3N0g1NDYuNDIxODhhNS43NzY0Nyw1Ljc3NjQ3LDAsMCwxLTUuNzU5MjgtNS43NTk3N1oiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik01NzEuMDkzNzUsODkuOTYxNTFoOC4yNTUzN3Y5LjU5OTEyaC04LjI1NTM3Wm0wLDE0LjM5ODkzaDguMjU1MzdWMTUyLjM1N2gtOC4yNTUzN1oiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik01ODUuNzgwNzYsMTEwLjEyMDJhNS43NzY0Nyw1Ljc3NjQ3LDAsMCwxLDUuNzU5MjgtNS43NTk3NmgxOC4yMzg3N1YxNTIuMzU3aC04LjI1NTM3VjExMi42MTU4MWgtNy40ODczMVYxNTIuMzU3aC04LjI1NTM3WiIvPjxwYXRoIGNsYXNzPSJjbHMtNCIgZD0iTTYxNS41NCwxMTAuMTIwMmE1Ljc3NjQ3LDUuNzc2NDcsMCwwLDEsNS43NTkyOC01Ljc1OTc2aDE4LjIzODc3djI3LjE2NmE1Ljc3NjQ4LDUuNzc2NDgsMCwwLDEtNS43NTkyOCw1Ljc1OTc3aC05Ljk4MzR2Ni44MTU0M2gxNS43NDI2OFYxNTIuMzU3SDYyMS4yOTkzMmE1Ljc3NjQ4LDUuNzc2NDgsMCwwLDEtNS43NTkyOC01Ljc1OTc3Wm0xNS43NDI2NywxOC45MTA2NXYtMTYuNDE1aC03LjQ4NzN2MTYuNDE1WiIvPjxwYXRoIGNsYXNzPSJjbHMtNCIgZD0iTTY2MC42NTgyLDkwLjkyMTQ3YTUuNzc2MzYsNS43NzYzNiwwLDAsMSw1Ljc1ODc5LTUuNzU5NzZoMTcuMjc5M2E1Ljc3NjU2LDUuNzc2NTYsMCwwLDEsNS43NTk3Niw1Ljc1OTc2djU1LjY3NTc4YTUuNzc2NTcsNS43NzY1NywwLDAsMS01Ljc1OTc2LDUuNzU5NzdoLTQuMDMyMjNsMS4xNTIzNSw0Ljc5OThoLTguMjU1ODZsLTEuMTUxMzctNC43OTk4SDY2Ni40MTdhNS43NzYzNyw1Ljc3NjM3LDAsMCwxLTUuNzU4NzktNS43NTk3N1ptMjAuNTQyLDUzLjE4MDE4VjkzLjQxNzA4SDY2OC45MTMwOXY1MC42ODQ1N1oiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik02OTUuMjE3NzcsOTAuOTIxNDdhNS43NzYzNiw1Ljc3NjM2LDAsMCwxLDUuNzU4NzktNS43NTk3NmgyMy4wMzkwN3YzMS45NjU4MmE1Ljc3NjU4LDUuNzc2NTgsMCwwLDEtNS43NTk3Nyw1Ljc1OTc2aC0xLjE1MjM0bDYuOTEyMTEsMjkuNDY5NzNoLTguMjU1ODZsLTYuOTExMTQtMjkuNDY5NzNoLTUuMzc2VjE1Mi4zNTdoLTguMjU0ODlabTIwLjU0MiwyMy43MTA0NVY5My40MTcwOEg3MDMuNDcyNjZ2MjEuMjE0ODRaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNNzQ1LjEzNTc0LDExMC4xMjAyYTUuNzc2NTcsNS43NzY1NywwLDAsMSw1Ljc1OTc3LTUuNzU5NzZoMTguMjM4Mjh2MTQuMzk4OTJoLTguMjU0ODh2LTYuMTQzNTVINzUzLjM5MTZ2MzEuNDg1ODRoNy40ODczMXYtNi4xNDM1Nmg4LjI1NDg4djguNjM5MTZBNS43NzYzNyw1Ljc3NjM3LDAsMCwxLDc2My4zNzUsMTUyLjM1N0g3NTAuODk1NTFhNS43NzY1OCw1Ljc3NjU4LDAsMCwxLTUuNzU5NzctNS43NTk3N1oiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik03NzQuODk1NTEsMTEwLjEyMDJhNS43NzYzNiw1Ljc3NjM2LDAsMCwxLDUuNzU4NzktNS43NTk3NmgxMi40Nzk0OWE1Ljc3NjU2LDUuNzc2NTYsMCwwLDEsNS43NTk3Niw1Ljc1OTc2djM2LjQ3NzA1YTUuNzc2NTcsNS43NzY1NywwLDAsMS01Ljc1OTc2LDUuNzU5NzdINzgwLjY1NDNhNS43NzYzNyw1Ljc3NjM3LDAsMCwxLTUuNzU4NzktNS43NTk3N1ptMTUuNzQyMTksMzMuOTgxNDVWMTEyLjYxNTgxaC03LjQ4NzMxdjMxLjQ4NTg0WiIvPjxwYXRoIGNsYXNzPSJjbHMtNCIgZD0iTTgwNC42NTQzLDExMC4xMjAyYTUuNzc2NTYsNS43NzY1NiwwLDAsMSw1Ljc1OTc2LTUuNzU5NzZoOS45ODM0Vjg1LjE2MTcxaDguMjU0ODhWMTUyLjM1N0g4MTAuNDE0MDZhNS43NzY1Nyw1Ljc3NjU3LDAsMCwxLTUuNzU5NzYtNS43NTk3N1ptMTUuNzQzMTYsMzMuOTgxNDVWMTEyLjYxNTgxaC03LjQ4NzN2MzEuNDg1ODRaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNODM0LjQxNDA2LDExMC4xMjAyYTUuNzc2MzYsNS43NzYzNiwwLDAsMSw1Ljc1ODc5LTUuNzU5NzZoMTguMjM5MjZ2MjcuMTY2YTUuNzc2NTgsNS43NzY1OCwwLDAsMS01Ljc1OTc3LDUuNzU5NzdIODQyLjY2OXY2LjgxNTQzaDE1Ljc0MzE2VjE1Mi4zNTdIODQwLjE3Mjg1YTUuNzc2MzcsNS43NzYzNywwLDAsMS01Ljc1ODc5LTUuNzU5NzdabTE1Ljc0MjE5LDE4LjkxMDY1di0xNi40MTVIODQyLjY2OXYxNi40MTVaIi8+PC9nPjwvZz48L3N2Zz4=" />-->
+      </div>
+      <div id="qrcode-wrap">
+        <canvas id="my-img" height="10" width="10"></canvas>
+      </div>
+      <div id="bottom-wrap">
+        <img id="bottom" src="Asset1-down.svg"/>
+        <!--<img id="bottom" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMTMwNSAzOTguNSI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNkOGQ4ZDg7fS5jbHMtMntmaWxsOnVybCgjbGluZWFyLWdyYWRpZW50KTt9LmNscy0ze2ZpbGw6I2ZmZjt9LmNscy00e2ZpbGw6I2M4Mjg2NDt9LmNscy01e2ZpbGw6IzA0MDQwNDtvcGFjaXR5OjAuNTtpc29sYXRpb246aXNvbGF0ZTt9LmNscy02e2ZpbGw6I2ZiZmJmYjt9LmNscy03e2ZpbGw6IzMyNzhiZTt9PC9zdHlsZT48bGluZWFyR3JhZGllbnQgaWQ9ImxpbmVhci1ncmFkaWVudCIgeDE9IjY1Mi41IiB5MT0iLTE3OC4xMTQxNyIgeDI9IjY1Mi41IiB5Mj0iLTEzNS42MTQxNyIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAtMSwgMCwgLTEzNS42MTQxNykiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwNDA0MDQiIHN0b3Atb3BhY2l0eT0iMC4yIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDQwNDA0IiBzdG9wLW9wYWNpdHk9IjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIj48ZyBpZD0iTGF5ZXJfMS0yIiBkYXRhLW5hbWU9IkxheWVyIDEiPjxyZWN0IGNsYXNzPSJjbHMtMSIgd2lkdGg9IjEzMDUiIGhlaWdodD0iMzk4LjUiLz48cmVjdCBjbGFzcz0iY2xzLTIiIHdpZHRoPSIxMzA1IiBoZWlnaHQ9IjQyLjUiLz48cmVjdCBjbGFzcz0iY2xzLTMiIHk9IjQyLjUiIHdpZHRoPSIxMzA1IiBoZWlnaHQ9IjM1NiIvPjxwYXRoIGNsYXNzPSJjbHMtNCIgZD0iTTEwMzguNSwyMjEuNWE4Ny43NSw4Ny43NSwwLDEsMS04Ny43NS04Ny43NUE4Ny43NSw4Ny43NSwwLDAsMSwxMDM4LjUsMjIxLjVabS04Ny43NS04MC4yOTFhODAuMjkxLDgwLjI5MSwwLDEsMCw4MC4yOTEsODAuMjkxQTgwLjI5MSw4MC4yOTEsMCwwLDAsOTUwLjc1LDE0MS4yMDlaIi8+PGNpcmNsZSBjbGFzcz0iY2xzLTQiIGN4PSI5NTAuNzUiIGN5PSIyMjEuNSIgcj0iNjcuNTY3OTkiLz48cGF0aCBjbGFzcz0iY2xzLTUiIGQ9Ik05NzEuMzgxLDI0Ny45ODJsLTUxLjUtNTEuNSwxMC4yMzktMTAuMjM5LDUxLjUsNTEuNVptLTQxLjI2MiwwLTEwLjIzOS0xMC4yMzksNTEuNS01MS41LDEwLjIzOSwxMC4yMzlaIi8+PHBhdGggY2xhc3M9ImNscy02IiBkPSJNOTcxLjM4MSwyNTIuMzY5bC01MS41LTUxLjVMOTMwLjEyLDE5MC42M2w1MS41LDUxLjVabS00MS4yNjIsMC0xMC4yMzktMTAuMjM5LDUxLjUtNTEuNSwxMC4yMzksMTAuMjM5WiIvPjxwYXRoIGNsYXNzPSJjbHMtNyIgZD0iTTQ0MiwyMjEuNWE4Ny43NSw4Ny43NSwwLDEsMS04Ny43NS04Ny43NUE4Ny43NSw4Ny43NSwwLDAsMSw0NDIsMjIxLjVabS04Ny43NS04MC4yOTFBODAuMjkxLDgwLjI5MSwwLDEsMCw0MzQuNTQxLDIyMS41LDgwLjI5MSw4MC4yOTEsMCwwLDAsMzU0LjI1LDE0MS4yMDlaIi8+PGNpcmNsZSBjbGFzcz0iY2xzLTciIGN4PSIzNTQuMjUiIGN5PSIyMjEuNSIgcj0iNjcuNTY3MDIiLz48cGF0aCBjbGFzcz0iY2xzLTUiIGQ9Ik0zOTAuNjY2LDIxNy4xMTJhMzYuNDE2LDM2LjQxNiwwLDEsMS0zNi40MTYtMzYuNDE2LDM2LjQxNiwzNi40MTYsMCwwLDEsMzYuNDE2LDM2LjQxNlptLTM2LjQxNi0yMS4wNmEyMS4wNiwyMS4wNiwwLDEsMCwyMS4wNiwyMS4wNkEyMS4wNjAxNiwyMS4wNjAxNiwwLDAsMCwzNTQuMjUsMTk2LjA1MloiLz48cGF0aCBjbGFzcz0iY2xzLTYiIGQ9Ik0zOTAuNjY2LDIyMS41YTM2LjQxNiwzNi40MTYsMCwxLDEtMzYuNDE2LTM2LjQxNkEzNi40MTYsMzYuNDE2LDAsMCwxLDM5MC42NjYsMjIxLjVaTTM1NC4yNSwyMDAuNDRhMjEuMDYsMjEuMDYsMCwxLDAsMjEuMDYsMjEuMDZBMjEuMDYwMTYsMjEuMDYwMTYsMCwwLDAsMzU0LjI1LDIwMC40NFoiLz48L2c+PC9nPjwvc3ZnPg==" />-->
+		<!-- edited from https://github.com/SAO-UI/sao-assets -->
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bwip-js/3.2.2/bwip-js-min.js" integrity="sha512-V5re1kGdd1k7P1hZbxSYPuTq6UZPUFKVebNjImiaEM2dRoVP1DEJy7Kgli4aeX405S3qVi+pFxUR+K123utT/A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+      var scancontent = 'https://youtu.be/dQw4w9WgXcQ';
+	  hash = decodeURI(location.hash.replace("#",""));
+	  if (hash) {scancontent = hash;}
+      let canvas = document.createElement('canvas');
+      try {
+        bwipjs.toCanvas("my-img", {
+          bcid: 'qrcode', // Barcode type
+          text: scancontent, // Text to encode
+          scale: 1,
+          backgroundcolor: "FFFFFF"
+        });
+        //document.getElementById('my-img').src = canvas.toDataURL('image/png');
+      } catch (e) {}
+	  // from https://github.com/metafloor/bwip-js
+    </script></body>
+</html>
