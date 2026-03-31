@@ -117,40 +117,33 @@ section {
   overflow: hidden;
 }
 
-.hero-bg-placeholder {
+.hero-bg {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(8,8,8,0) 0%, rgba(8,8,8,0.7) 60%, rgba(8,8,8,1) 100%),
-    linear-gradient(135deg, #1a0a00 0%, #0a0a0a 50%, #0d0808 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.hero-img-placeholder {
+.hero-bg img {
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 12px;
-  border: 1px dashed var(--border2);
-  color: var(--muted2);
+  object-fit: cover;
+  display: block;
 }
 
-.hero-img-placeholder span {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.15em;
-}
-
-/* Scan line effect */
-.hero-img-placeholder::before {
+.hero-bg::after {
   content: '';
   position: absolute;
   inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8,8,8,0) 0%, rgba(8,8,8,0.7) 60%, rgba(8,8,8,1) 100%);
+  pointer-events: none;
+}
+
+/* Scan line effect on hero */
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   background: repeating-linear-gradient(
     0deg,
     transparent,
@@ -390,55 +383,18 @@ h2 {
   background: var(--surface);
 }
 
-.video-placeholder {
+.demo-video {
   width: 100%;
   max-width: 860px;
-  aspect-ratio: 16/9;
-  background: var(--surface2);
-  border: 1px dashed var(--border2);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
   margin: 0 auto;
-  position: relative;
-  overflow: hidden;
+  display: block;
+  border: 1px solid var(--border);
+  background: var(--surface2);
 }
 
-.video-placeholder::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 3px,
-    rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 4px
-  );
-}
-
-.video-play-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--fire-glow);
-  border: 2px solid var(--fire-border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: var(--fire);
-  position: relative;
-  z-index: 1;
-}
-
-.video-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--muted2);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 1;
+.demo-video video {
+  width: 100%;
+  display: block;
 }
 
 /* ── TIMELINE ── */
@@ -560,6 +516,14 @@ h2 {
   font-weight: 900;
   color: var(--muted2);
   letter-spacing: 0.05em;
+}
+
+.member-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  display: block;
 }
 
 .member-name {
@@ -693,6 +657,282 @@ footer {
   .contact-grid { grid-template-columns: 1fr; }
   footer { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
 }
+/* ── PIPELINE STEPS ── */
+.pipeline-steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.pipe-step {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 28px 20px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  flex: 1;
+  min-width: 0;
+}
+.pipe-step:hover { border-color: var(--fire); }
+.pipe-step.active { border-color: var(--fire); box-shadow: 0 0 20px var(--fire-glow); }
+
+.pipe-step-highlight { border-color: var(--fire-border); }
+.pipe-step-highlight .pipe-top-bar { opacity: 1; }
+
+.pipe-top-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--fire);
+  border-radius: 6px 6px 0 0;
+  opacity: 0.7;
+}
+
+.pipe-diff-tag {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--fire);
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+  text-align: center;
+}
+
+/* ── Pipeline Visuals ── */
+.pipe-visual {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+/* Camera icon */
+.pipe-cam { display: flex; align-items: center; gap: 0; }
+.pipe-cam-body {
+  width: 64px; height: 46px;
+  background: #1a1a1a;
+  border: 1.5px solid #333;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.pipe-cam-lens {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid #444;
+  background: #111;
+  display: flex; align-items: center; justify-content: center;
+}
+.pipe-cam-lens-inner {
+  position: absolute;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 1px solid #555;
+  background: #0d0d0d;
+}
+.pipe-cam-flash {
+  position: absolute;
+  top: 6px; right: 8px;
+  width: 10px; height: 7px;
+  background: #2a2a2a;
+  border-radius: 2px;
+}
+
+/* YOLO detection boxes */
+.pipe-detect { display: flex; align-items: center; gap: 10px; }
+.pipe-detect-frame {
+  width: 52px; height: 52px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  position: relative;
+}
+.pipe-bbox {
+  position: absolute;
+  border: 1.5px solid var(--fire);
+}
+.pipe-bbox-1 { top: 3px; left: 3px; width: 18px; height: 13px; }
+.pipe-bbox-2 { top: 20px; left: 22px; width: 22px; height: 28px; opacity: 0.7; border-color: var(--fire-light); }
+.pipe-bbox-3 { top: 22px; left: 3px; width: 14px; height: 20px; opacity: 0.5; }
+
+.pipe-detect-count {
+  width: 52px; height: 52px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.pipe-detect-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--fire);
+}
+.pipe-detect-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7px; color: #555; letter-spacing: 0.08em;
+}
+
+/* Brain / VLM */
+.pipe-brain { position: relative; }
+.pipe-brain-circle {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: #1a0800;
+  border: 1.5px solid var(--fire);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+.pipe-brain-emoji {
+  font-size: 24px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+.pipe-brain-pulse {
+  position: absolute;
+  top: -6px; left: -6px;
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  border: 1px solid var(--fire);
+  opacity: 0.3;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.15); opacity: 0.1; }
+}
+
+/* Alert bell */
+.pipe-alert { position: relative; width: 52px; height: 52px; }
+.pipe-alert-bell {
+  position: absolute;
+  top: 12px; left: 14px;
+  width: 24px; height: 22px;
+  background: var(--fire);
+  border-radius: 12px 12px 0 0;
+}
+.pipe-alert-bell::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: -3px;
+  width: 30px; height: 6px;
+  background: var(--fire);
+  border-radius: 3px;
+}
+.pipe-alert-ring {
+  position: absolute;
+  top: 6px; left: 22px;
+  width: 8px; height: 8px;
+  border: 2px solid var(--fire-light);
+  border-radius: 50% 50% 0 0;
+  border-bottom: none;
+}
+.pipe-alert-dot {
+  position: absolute;
+  bottom: 10px; left: 22px;
+  width: 8px; height: 8px;
+  background: var(--fire);
+  border-radius: 50%;
+}
+
+.pipe-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.pipe-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.pipe-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--fire);
+}
+
+.pipe-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, margin-top 0.3s ease, opacity 0.3s ease;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  text-align: left;
+  opacity: 0;
+  margin-top: 0;
+}
+.pipe-detail.open {
+  max-height: 200px;
+  margin-top: 14px;
+  opacity: 1;
+}
+
+.pipe-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2px;
+  padding-top: 60px;
+  flex-shrink: 0;
+  width: 48px;
+}
+
+.pipe-arrow-line {
+  display: block;
+  width: 32px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--fire), transparent);
+  position: relative;
+}
+.pipe-arrow-line::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: -3px;
+  border: 4px solid transparent;
+  border-left: 6px solid var(--fire);
+}
+
+.pipe-arrow-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--muted2);
+  margin-top: 4px;
+}
+
+.pipe-hint {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted2);
+  margin-top: 16px;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+  .pipeline-steps { flex-direction: column; align-items: stretch; gap: 0; }
+  .pipe-arrow { transform: rotate(90deg); padding: 8px 0; }
+}
 </style>
 </head>
 <body>
@@ -712,11 +952,8 @@ footer {
 
 <!-- ── HERO ── -->
 <section id="hero">
-  <div class="hero-bg-placeholder">
-    <div class="hero-img-placeholder">
-      <span>📷 CONSTRUCTION SITE — AI OVERLAY VISUAL</span>
-      <span style="font-size:10px;opacity:0.5;">[PLACEHOLDER — REPLACE WITH ANNOTATED SITE PHOTO]</span>
-    </div>
+  <div class="hero-bg">
+    <img src="assets/hero.jpg" alt="Construction site with AI detection overlays">
   </div>
 
   <div class="hero-content">
@@ -740,80 +977,98 @@ footer {
   <p class="section-sub">A three-stage pipeline — local detection, contextual reasoning, and smart alerting — all running on your existing camera infrastructure.</p>
 
   <div class="pipeline-wrap">
-    <svg viewBox="0 0 920 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
-      <defs>
-        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L8,3 z" fill="#E85D04" opacity="0.6"/>
-        </marker>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="3" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
+    <div class="pipeline-steps">
+      <div class="pipe-step" onclick="togglePipe(this)">
+        <div class="pipe-top-bar"></div>
+        <div class="pipe-visual">
+          <div class="pipe-cam">
+            <div class="pipe-cam-body">
+              <div class="pipe-cam-lens"></div>
+              <div class="pipe-cam-lens-inner"></div>
+            </div>
+            <div class="pipe-cam-flash"></div>
+          </div>
+        </div>
+        <div class="pipe-label">CAMERA INPUT</div>
+        <div class="pipe-sub">CCTV / Mobile</div>
+        <div class="pipe-tag">Existing Infra</div>
+        <div class="pipe-detail">
+          Works with any IP camera, CCTV feed, or phone camera. No new hardware required. Supports telephoto, standard, wide-angle, and ultra-wide lenses with auto-detection.
+        </div>
+      </div>
 
-      <!-- Step 1: Camera -->
-      <rect x="20" y="60" width="180" height="160" rx="4" fill="#101010" stroke="#2A2A2A" stroke-width="1"/>
-      <rect x="20" y="60" width="180" height="3" rx="2" fill="#E85D04" opacity="0.8"/>
-      <!-- Camera icon -->
-      <rect x="75" y="95" width="70" height="52" rx="6" fill="#1A1A1A" stroke="#333" stroke-width="1.5"/>
-      <circle cx="110" cy="121" r="16" fill="#111" stroke="#444" stroke-width="1.5"/>
-      <circle cx="110" cy="121" r="8" fill="#0d0d0d" stroke="#555" stroke-width="1"/>
-      <rect x="130" y="98" width="10" height="8" rx="2" fill="#2a2a2a"/>
-      <!-- Label -->
-      <text x="110" y="165" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="1">CAMERA INPUT</text>
-      <text x="110" y="182" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#666" letter-spacing="1">CCTV / MOBILE</text>
-      <text x="110" y="208" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#E85D04">EXISTING INFRA</text>
+      <div class="pipe-arrow">
+        <span class="pipe-arrow-line"></span>
+        <span class="pipe-arrow-time">49ms</span>
+      </div>
 
-      <!-- Arrow 1 -->
-      <line x1="205" y1="140" x2="255" y2="140" stroke="#E85D04" stroke-width="1.5" stroke-opacity="0.6" marker-end="url(#arr)"/>
-      <text x="230" y="130" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#444">49ms</text>
+      <div class="pipe-step" onclick="togglePipe(this)">
+        <div class="pipe-top-bar"></div>
+        <div class="pipe-visual">
+          <div class="pipe-detect">
+            <div class="pipe-detect-frame">
+              <div class="pipe-bbox pipe-bbox-1"></div>
+              <div class="pipe-bbox pipe-bbox-2"></div>
+              <div class="pipe-bbox pipe-bbox-3"></div>
+            </div>
+            <div class="pipe-detect-count">
+              <span class="pipe-detect-num">12</span>
+              <span class="pipe-detect-label">CLASSES</span>
+            </div>
+          </div>
+        </div>
+        <div class="pipe-label">YOLO DETECTION</div>
+        <div class="pipe-sub">YOLOv11n &middot; Local GPU</div>
+        <div class="pipe-tag">Fire &middot; Smoke &middot; PPE &middot; Gas</div>
+        <div class="pipe-detail">
+          Fine-tuned on 6,100 construction site images. Detects fire, smoke, gas cylinders, welding sparks, fire extinguishers, scaffold nets, PPE helmets and vests, hose reels, exit signs, fire blankets, and tarpaulins. Runs entirely on-device.
+        </div>
+      </div>
 
-      <!-- Step 2: YOLO -->
-      <rect x="260" y="60" width="180" height="160" rx="4" fill="#101010" stroke="#2A2A2A" stroke-width="1"/>
-      <rect x="260" y="60" width="180" height="3" rx="2" fill="#E85D04" opacity="0.8"/>
-      <!-- Detection boxes icon -->
-      <rect x="295" y="90" width="50" height="50" fill="#1A1A1A" stroke="#333" stroke-width="1"/>
-      <rect x="296" y="91" width="20" height="14" fill="none" stroke="#E85D04" stroke-width="1.5"/>
-      <rect x="320" y="110" width="24" height="28" fill="none" stroke="#F48C06" stroke-width="1.5" opacity="0.7"/>
-      <rect x="297" y="116" width="16" height="22" fill="none" stroke="#E85D04" stroke-width="1" opacity="0.5"/>
-      <!-- Right side icon -->
-      <rect x="355" y="90" width="60" height="50" fill="#1A1A1A" stroke="#333" stroke-width="1"/>
-      <text x="385" y="120" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-size="11" font-weight="700" fill="#E85D04">12</text>
-      <text x="385" y="132" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" fill="#555">CLASSES</text>
-      <!-- Label -->
-      <text x="350" y="165" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="1">YOLO DETECTION</text>
-      <text x="350" y="182" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#666" letter-spacing="1">YOLOv11n · LOCAL GPU</text>
-      <text x="350" y="208" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#E85D04">FIRE · SMOKE · PPE · GAS</text>
+      <div class="pipe-arrow">
+        <span class="pipe-arrow-line"></span>
+        <span class="pipe-arrow-time">route</span>
+      </div>
 
-      <!-- Arrow 2 -->
-      <line x1="445" y1="140" x2="495" y2="140" stroke="#E85D04" stroke-width="1.5" stroke-opacity="0.6" marker-end="url(#arr)"/>
-      <text x="470" y="130" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#444">score</text>
+      <div class="pipe-step pipe-step-highlight" onclick="togglePipe(this)">
+        <div class="pipe-top-bar"></div>
+        <span class="pipe-diff-tag">Key Differentiator</span>
+        <div class="pipe-visual">
+          <div class="pipe-brain">
+            <div class="pipe-brain-circle"><span class="pipe-brain-emoji">&#129504;</span></div>
+            <div class="pipe-brain-pulse"></div>
+          </div>
+        </div>
+        <div class="pipe-label">VLM REASONING</div>
+        <div class="pipe-sub">Scene Context &middot; Risk Level</div>
+        <div class="pipe-tag">Understands Why</div>
+        <div class="pipe-detail">
+          A Vision Language Model reasons about the full scene: proximity of fuel sources, fire spread risk, regulatory compliance. Outputs a 5-level risk classification with natural-language explanation. The Future Agent predicts how the scene may evolve. Three-tier routing sends only ambiguous or high-stakes cases to the most capable model.
+        </div>
+      </div>
 
-      <!-- Step 3: VLM -->
-      <rect x="500" y="60" width="180" height="160" rx="4" fill="#101010" stroke="#E85D04" stroke-width="1" filter="url(#glow)"/>
-      <rect x="500" y="60" width="180" height="3" rx="2" fill="#E85D04"/>
-      <!-- Brain/reasoning icon -->
-      <circle cx="590" cy="118" r="28" fill="#1A0800" stroke="#E85D04" stroke-width="1.5" opacity="0.8"/>
-      <text x="590" y="124" text-anchor="middle" font-size="22">🧠</text>
-      <!-- Label -->
-      <text x="590" y="165" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="1">VLM REASONING</text>
-      <text x="590" y="182" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#666" letter-spacing="1">SCENE CONTEXT · RISK</text>
-      <text x="590" y="208" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#E85D04">UNDERSTANDS WHY</text>
-      <text x="590" y="36" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#E85D04" opacity="0.7">KEY DIFFERENTIATOR</text>
+      <div class="pipe-arrow">
+        <span class="pipe-arrow-line"></span>
+      </div>
 
-      <!-- Arrow 3 -->
-      <line x1="685" y1="140" x2="735" y2="140" stroke="#E85D04" stroke-width="1.5" stroke-opacity="0.6" marker-end="url(#arr)"/>
-
-      <!-- Step 4: Alert -->
-      <rect x="740" y="60" width="160" height="160" rx="4" fill="#101010" stroke="#2A2A2A" stroke-width="1"/>
-      <rect x="740" y="60" width="160" height="3" rx="2" fill="#E85D04" opacity="0.8"/>
-      <!-- Alert icon -->
-      <text x="820" y="128" text-anchor="middle" font-size="32">🚨</text>
-      <!-- Label -->
-      <text x="820" y="165" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="1">SMART ALERT</text>
-      <text x="820" y="182" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#666" letter-spacing="1">50ms ALARM</text>
-      <text x="820" y="208" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#E85D04">HUMAN-READABLE</text>
-    </svg>
+      <div class="pipe-step" onclick="togglePipe(this)">
+        <div class="pipe-top-bar"></div>
+        <div class="pipe-visual">
+          <div class="pipe-alert">
+            <div class="pipe-alert-bell"></div>
+            <div class="pipe-alert-ring"></div>
+            <div class="pipe-alert-dot"></div>
+          </div>
+        </div>
+        <div class="pipe-label">SMART ALERT</div>
+        <div class="pipe-sub">50ms Preliminary Alarm</div>
+        <div class="pipe-tag">Human-Readable</div>
+        <div class="pipe-detail">
+          Instant 50ms alarm fires before VLM reasoning completes. Full report includes risk level, regulatory citations, spatial analysis, and actionable recommendations. Human-readable, not just a binary flag. Exportable for audit and compliance records.
+        </div>
+      </div>
+    </div>
+    <p class="pipe-hint">Click any stage to learn more</p>
   </div>
 </section>
 
@@ -889,12 +1144,13 @@ footer {
 <section id="demo">
   <div class="section-label">Demo</div>
   <h2>See It In Action</h2>
-  <p class="section-sub">Live system running at fireeye.evnchn.io — demo video coming soon.</p>
+  <p class="section-sub">Live system running at fireeye.evnchn.io — watch the demo below.</p>
 
-  <div class="video-placeholder">
-    <div class="video-play-icon">▶</div>
-    <div class="video-label">Demo video — coming soon</div>
-    <div class="video-label" style="font-size:9px;opacity:0.4;margin-top:4px;">Live system available at fireeye.evnchn.io</div>
+  <div class="demo-video">
+    <video controls preload="metadata">
+      <source src="assets/demo.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
   </div>
 </section>
 
@@ -952,7 +1208,7 @@ footer {
   <div class="team-grid">
 
     <div class="member-card" onclick="toggleMember(this)">
-      <div class="member-photo"><span class="member-initials">EC</span></div>
+      <div class="member-photo"><img src="assets/evan.jpg" alt="Evan"></div>
       <div class="member-name">Evan</div>
       <div class="member-role">Technical Lead & AI Infrastructure</div>
       <div class="member-expand">▸ More</div>
@@ -969,7 +1225,7 @@ footer {
     </div>
 
     <div class="member-card" onclick="toggleMember(this)">
-      <div class="member-photo"><span class="member-initials">SK</span></div>
+      <div class="member-photo"><img src="assets/saanvi.jpg" alt="Saanvi"></div>
       <div class="member-name">Saanvi</div>
       <div class="member-role">Data & Research Lead</div>
       <div class="member-expand">▸ More</div>
@@ -986,7 +1242,7 @@ footer {
     </div>
 
     <div class="member-card" onclick="toggleMember(this)">
-      <div class="member-photo"><span class="member-initials">SK</span></div>
+      <div class="member-photo"><img src="assets/shalini.jpg" alt="Shalini"></div>
       <div class="member-name">Shalini</div>
       <div class="member-role">Project Coordination & Outreach</div>
       <div class="member-expand">▸ More</div>
@@ -1002,7 +1258,7 @@ footer {
     </div>
 
     <div class="member-card" onclick="toggleMember(this)">
-      <div class="member-photo"><span class="member-initials">CP</span></div>
+      <div class="member-photo"><img src="assets/chloe.png" alt="Chloe"></div>
       <div class="member-name">Chloe</div>
       <div class="member-role">UI/UX Design & Liaison</div>
       <div class="member-expand">▸ More</div>
@@ -1065,6 +1321,17 @@ function toggleMember(card) {
   const isOpen = bio.classList.contains('open');
   bio.classList.toggle('open', !isOpen);
   expand.textContent = isOpen ? '▸ More' : '▾ Less';
+}
+
+function togglePipe(step) {
+  const detail = step.querySelector('.pipe-detail');
+  const isOpen = detail.classList.contains('open');
+  document.querySelectorAll('.pipe-detail.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.pipe-step.active').forEach(s => s.classList.remove('active'));
+  if (!isOpen) {
+    detail.classList.add('open');
+    step.classList.add('active');
+  }
 }
 </script>
 </body>
