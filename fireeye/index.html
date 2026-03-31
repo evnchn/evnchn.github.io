@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FireEye — AI Fire Safety for Construction Sites</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080808;
+  --surface: #101010;
+  --surface2: #161616;
+  --border: #1E1E1E;
+  --border2: #2A2A2A;
+  --fire: #E85D04;
+  --fire-light: #F48C06;
+  --fire-glow: rgba(232,93,4,0.15);
+  --fire-border: rgba(232,93,4,0.3);
+  --text: #E8E8E8;
+  --muted: #666;
+  --muted2: #444;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  overflow-x: hidden;
+}
+
+/* Grid texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(232,93,4,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,93,4,0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 56px;
+  background: rgba(8,8,8,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+.nav-brand span { color: var(--fire); }
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--fire); }
+
+/* ── SECTIONS ── */
+section {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 96px 48px 64px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--fire);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  justify-content: flex-end;
+  padding-bottom: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg-placeholder {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8,8,8,0) 0%, rgba(8,8,8,0.7) 60%, rgba(8,8,8,1) 100%),
+    linear-gradient(135deg, #1a0a00 0%, #0a0a0a 50%, #0d0808 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px dashed var(--border2);
+  color: var(--muted2);
+}
+
+.hero-img-placeholder span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+}
+
+/* Scan line effect */
+.hero-img-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(232,93,4,0.015) 2px,
+    rgba(232,93,4,0.015) 4px
+  );
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--fire-glow);
+  border: 1px solid var(--fire-border);
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--fire);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.hero-tag::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fire);
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(72px, 10vw, 128px);
+  font-weight: 900;
+  line-height: 0.9;
+  color: #fff;
+  letter-spacing: -0.01em;
+  margin-bottom: 24px;
+}
+
+h1 .fire { color: var(--fire); }
+
+.hero-tagline {
+  font-size: 18px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.6;
+  max-width: 520px;
+  margin-bottom: 36px;
+}
+
+.hero-tagline strong { color: var(--text); font-weight: 500; }
+
+.hero-cta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: var(--fire);
+  color: #fff;
+  padding: 12px 28px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover { background: var(--fire-light); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--muted);
+  padding: 12px 28px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--border2);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover { border-color: var(--fire); color: var(--fire); }
+
+/* ── HOW IT WORKS ── */
+#how {
+  background: var(--surface);
+}
+
+h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.section-sub {
+  font-size: 15px;
+  color: var(--muted);
+  font-weight: 300;
+  margin-bottom: 48px;
+  max-width: 560px;
+  line-height: 1.6;
+}
+
+/* ── PIPELINE SVG ── */
+.pipeline-wrap {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ── CAPABILITIES ── */
+#capabilities {
+  min-height: auto;
+  padding: 96px 48px;
+}
+
+.cap-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+  margin-top: 48px;
+  border: 1px solid var(--border);
+}
+
+.cap-card {
+  background: var(--surface);
+  padding: 32px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.cap-card:hover { background: var(--surface2); }
+
+.cap-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.cap-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 8px;
+}
+
+.cap-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.kw {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--fire);
+  background: var(--fire-glow);
+  border: 1px solid var(--fire-border);
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+}
+
+.cap-detail {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  font-weight: 300;
+  display: none;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.cap-detail.open { display: block; }
+
+.cap-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+
+.cap-card:hover .cap-toggle { border-color: var(--fire); color: var(--fire); }
+
+/* ── DEMO VIDEO ── */
+#demo {
+  min-height: auto;
+  padding: 96px 48px;
+  background: var(--surface);
+}
+
+.video-placeholder {
+  width: 100%;
+  max-width: 860px;
+  aspect-ratio: 16/9;
+  background: var(--surface2);
+  border: 1px dashed var(--border2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.video-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 4px
+  );
+}
+
+.video-play-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--fire-glow);
+  border: 2px solid var(--fire-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--fire);
+  position: relative;
+  z-index: 1;
+}
+
+.video-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted2);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── TIMELINE ── */
+#history {
+  min-height: auto;
+  padding: 96px 48px;
+}
+
+.timeline {
+  position: relative;
+  max-width: 860px;
+  margin-top: 48px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, var(--fire) 0%, var(--border) 100%);
+}
+
+.tl-item {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 48px;
+  padding-left: 0;
+}
+
+.tl-dot-wrap {
+  flex-shrink: 0;
+  width: 48px;
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.tl-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--fire);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--fire);
+  flex-shrink: 0;
+}
+
+.tl-body {}
+
+.tl-phase {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--fire);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.tl-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.tl-text {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: 600px;
+}
+
+/* ── TEAM ── */
+#team {
+  background: var(--surface);
+  min-height: auto;
+  padding: 96px 48px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+
+.member-card {
+  cursor: pointer;
+}
+
+.member-photo {
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.member-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, transparent 40%, rgba(232,93,4,0.05) 100%);
+}
+
+.member-initials {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--muted2);
+  letter-spacing: 0.05em;
+}
+
+.member-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.member-role {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--fire);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.member-bio {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  font-weight: 300;
+  display: none;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+.member-bio.open { display: block; }
+
+.member-bio ul {
+  padding-left: 14px;
+  list-style: disc;
+}
+
+.member-bio li { margin-bottom: 4px; }
+
+.member-expand {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.member-card:hover .member-expand { color: var(--fire); }
+
+/* ── CONTACT ── */
+#contact {
+  min-height: auto;
+  padding: 96px 48px;
+  background: var(--surface);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-top: 48px;
+  max-width: 860px;
+}
+
+.contact-item {
+  border-left: 2px solid var(--fire-border);
+  padding-left: 20px;
+}
+
+.contact-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.contact-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.contact-value a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contact-value a:hover { color: var(--fire); }
+
+/* ── FOOTER ── */
+footer {
+  position: relative;
+  z-index: 1;
+  padding: 24px 48px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--muted2);
+  letter-spacing: 0.05em;
+}
+
+.footer-brand span { color: var(--fire); }
+
+.footer-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+  letter-spacing: 0.1em;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  section { padding: 80px 24px 48px; }
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .cap-grid { grid-template-columns: 1fr; }
+  .team-grid { grid-template-columns: 1fr 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  footer { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand"><span>Fire</span>Eye</div>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#capabilities">Capabilities</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#history">Journey</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-bg-placeholder">
+    <div class="hero-img-placeholder">
+      <span>📷 CONSTRUCTION SITE — AI OVERLAY VISUAL</span>
+      <span style="font-size:10px;opacity:0.5;">[PLACEHOLDER — REPLACE WITH ANNOTATED SITE PHOTO]</span>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Live System · Hong Kong</div>
+    <h1><span class="fire">Fire</span>Eye</h1>
+    <p class="hero-tagline">
+      <strong>AI-powered fire safety monitoring</strong> for construction sites.
+      Detects, reasons, and alerts — before a situation becomes a crisis.
+    </p>
+    <div class="hero-cta">
+      <a href="#how" class="btn-primary">See How It Works</a>
+      <a href="#contact" class="btn-secondary">Get In Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how">
+  <div class="section-label">How It Works</div>
+  <h2>From Camera<br>to Actionable Alert</h2>
+  <p class="section-sub">A three-stage pipeline — local detection, contextual reasoning, and smart alerting — all running on your existing camera infrastructure.</p>
+
+  <div class="pipeline-wrap">
+    <svg viewBox="0 0 920 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#E85D04" opacity="0.6"/>
+        </marker>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Step 1: Camera -->
+      <rect x="20" y="60" width="180" height="160" rx="4" fill="#101010" stroke="#2A2A2A" stroke-width="1"/>
+      <rect x="20" y="60" width="180" height="3" rx="2" fill="#E85D04" opacity="0.8"/>
+      <!-- Camera icon -->
+      <rect x="75" y="95" width="70" height="52" rx="6" fill="#1A1A1A" stroke="#333" stroke-width="1.5"/>
+      <circle cx="110" cy="121" r="16" fill="#111" stroke="#444" stroke-width="1.5"/>
+      <circle cx="110" cy="121" r="8" fill="#0d0d0d" stroke="#555" stroke-width="1"/>
+      <rect x="130" y="98" width="10" height="8" rx="2" fill="#2a2a2a"/>
+      <!-- Label -->
+      <text x="110" y="165" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="1">CAMERA INPUT</text>
+      <text x="110" y="182" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#666" letter-spacing="1">CCTV / MOBILE</text>
+      <text x="110" y="208" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#E85D04">EXISTING INFRA</text>
+
+      <!-- Arrow 1 -->
+      <line x1="205" y1="140" x2="255" y2="140" stroke="#E85D04" stroke-width="1.5" stroke-opacity="0.6" marker-end="url(#arr)"/>
+      <text x="230" y="130" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#444">49ms</text>
+
+      <!-- Step 2: YOLO -->
+      <rect x="260" y="60" width="180" height="160" rx="4" fill="#101010" stroke="#2A2A2A" stroke-width="1"/>
+      <rect x="260" y="60" width="180" height="3" rx="2" fill="#E85D04" opacity="0.8"/>
+      <!-- Detection boxes icon -->
+      <rect x="295" y="90" width="50" height="50" fill="#1A1A1A" stroke="#333" stroke-width="1"/>
+      <rect x="296" y="91" width="20" height="14" fill="none" stroke="#E85D04" stroke-width="1.5"/>
+      <rect x="320" y="110" width="24" height="28" fill="none" stroke="#F48C06" stroke-width="1.5" opacity="0.7"/>
+      <rect x="297" y="116" width="16" height="22" fill="none" stroke="#E85D04" stroke-width="1" opacity="0.5"/>
+      <!-- Right side icon -->
+      <rect x="355" y="90" width="60" height="50" fill="#1A1A1A" stroke="#333" stroke-width="1"/>
+      <text x="385" y="120" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-size="11" font-weight="700" fill="#E85D04">12</text>
+      <text x="385" y="132" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" fill="#555">CLASSES</text>
+      <!-- Label -->
+      <text x="350" y="165" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="1">YOLO DETECTION</text>
+      <text x="350" y="182" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#666" letter-spacing="1">YOLOv11n · LOCAL GPU</text>
+      <text x="350" y="208" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#E85D04">FIRE · SMOKE · PPE · GAS</text>
+
+      <!-- Arrow 2 -->
+      <line x1="445" y1="140" x2="495" y2="140" stroke="#E85D04" stroke-width="1.5" stroke-opacity="0.6" marker-end="url(#arr)"/>
+      <text x="470" y="130" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#444">score</text>
+
+      <!-- Step 3: VLM -->
+      <rect x="500" y="60" width="180" height="160" rx="4" fill="#101010" stroke="#E85D04" stroke-width="1" filter="url(#glow)"/>
+      <rect x="500" y="60" width="180" height="3" rx="2" fill="#E85D04"/>
+      <!-- Brain/reasoning icon -->
+      <circle cx="590" cy="118" r="28" fill="#1A0800" stroke="#E85D04" stroke-width="1.5" opacity="0.8"/>
+      <text x="590" y="124" text-anchor="middle" font-size="22">🧠</text>
+      <!-- Label -->
+      <text x="590" y="165" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="1">VLM REASONING</text>
+      <text x="590" y="182" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#666" letter-spacing="1">SCENE CONTEXT · RISK</text>
+      <text x="590" y="208" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#E85D04">UNDERSTANDS WHY</text>
+      <text x="590" y="36" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#E85D04" opacity="0.7">KEY DIFFERENTIATOR</text>
+
+      <!-- Arrow 3 -->
+      <line x1="685" y1="140" x2="735" y2="140" stroke="#E85D04" stroke-width="1.5" stroke-opacity="0.6" marker-end="url(#arr)"/>
+
+      <!-- Step 4: Alert -->
+      <rect x="740" y="60" width="160" height="160" rx="4" fill="#101010" stroke="#2A2A2A" stroke-width="1"/>
+      <rect x="740" y="60" width="160" height="3" rx="2" fill="#E85D04" opacity="0.8"/>
+      <!-- Alert icon -->
+      <text x="820" y="128" text-anchor="middle" font-size="32">🚨</text>
+      <!-- Label -->
+      <text x="820" y="165" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="1">SMART ALERT</text>
+      <text x="820" y="182" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#666" letter-spacing="1">50ms ALARM</text>
+      <text x="820" y="208" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#E85D04">HUMAN-READABLE</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ── CAPABILITIES ── -->
+<section id="capabilities">
+  <div class="section-label">Capabilities</div>
+  <h2>What FireEye<br>Can Do</h2>
+  <p class="section-sub">Click any card to expand details.</p>
+
+  <div class="cap-grid">
+    <div class="cap-card" onclick="toggleCap(this)">
+      <div class="cap-toggle">+</div>
+      <span class="cap-icon">🔥</span>
+      <div class="cap-title">Fire & Hazard Detection</div>
+      <div class="cap-keywords">
+        <span class="kw">Fire</span>
+        <span class="kw">Smoke</span>
+        <span class="kw">Gas Cylinder</span>
+        <span class="kw">Welding Sparks</span>
+        <span class="kw">12 Classes</span>
+      </div>
+      <div class="cap-detail">
+        YOLOv11n fine-tuned on 12 fire-safety classes specific to construction sites — fire, smoke, gas cylinders, welding sparks, fire extinguishers, scaffold nets, PPE, and more. Runs locally at 49ms with no cloud dependency. Evaluated on real HK construction site imagery including Wang Fuk Court fire photos.
+      </div>
+    </div>
+
+    <div class="cap-card" onclick="toggleCap(this)">
+      <div class="cap-toggle">+</div>
+      <span class="cap-icon">🧠</span>
+      <div class="cap-title">Contextual AI Reasoning</div>
+      <div class="cap-keywords">
+        <span class="kw">Scene Understanding</span>
+        <span class="kw">Risk Level</span>
+        <span class="kw">Escalation Prediction</span>
+      </div>
+      <div class="cap-detail">
+        A VLM reasoning layer sits above detection — it doesn't just see fire, it understands the scene: proximity of fuel sources, spread risk, spatial relationships. Outputs a 5-level risk classification with a natural-language explanation. The Future Agent predicts how the scene may evolve, not just what's happening now.
+      </div>
+    </div>
+
+    <div class="cap-card" onclick="toggleCap(this)">
+      <div class="cap-toggle">+</div>
+      <span class="cap-icon">📷</span>
+      <div class="cap-title">Camera Health Diagnostics</div>
+      <div class="cap-keywords">
+        <span class="kw">Blocked Lens</span>
+        <span class="kw">Dust Detection</span>
+        <span class="kw">Camera Type</span>
+        <span class="kw">&lt;0.3ms</span>
+      </div>
+      <div class="cap-detail">
+        FireEye monitors the health of its own cameras in under 0.3ms per frame. Detects blocked lenses (8/8 scenarios, zero false positives), dust buildup via contrast baseline tracking, and auto-identifies camera type (telephoto / standard / wide / ultra-wide). The best fire detection means nothing if the camera is dusty.
+      </div>
+    </div>
+
+    <div class="cap-card" onclick="toggleCap(this)">
+      <div class="cap-toggle">+</div>
+      <span class="cap-icon">🔒</span>
+      <div class="cap-title">Privacy & Compliance</div>
+      <div class="cap-keywords">
+        <span class="kw">Face Anonymisation</span>
+        <span class="kw">PPE Verification</span>
+        <span class="kw">HK Regulations</span>
+      </div>
+      <div class="cap-detail">
+        Face anonymisation built-in (OpenCV DNN + Gaussian blur) for privacy-compliant site footage. PPE uniform comparison against a reference image — no retraining required. All alerts reference the HK Fire Services Department Code of Practice directly.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DEMO ── -->
+<section id="demo">
+  <div class="section-label">Demo</div>
+  <h2>See It In Action</h2>
+  <p class="section-sub">Live system running at fireeye.evnchn.io — demo video coming soon.</p>
+
+  <div class="video-placeholder">
+    <div class="video-play-icon">▶</div>
+    <div class="video-label">Demo video — coming soon</div>
+    <div class="video-label" style="font-size:9px;opacity:0.4;margin-top:4px;">Live system available at fireeye.evnchn.io</div>
+  </div>
+</section>
+
+<!-- ── PROJECT HISTORY ── -->
+<section id="history">
+  <div class="section-label">Project History</div>
+  <h2>How We Got Here</h2>
+  <p class="section-sub">HKUST Final Year Project — two semesters of industry-grounded development.</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+      <div class="tl-body">
+        <div class="tl-phase">Semester 1 — Oct 2025</div>
+        <div class="tl-title">Scaffolding Safety Training Platform</div>
+        <div class="tl-text">Built Scaffluent — an AI-powered training platform for Hong Kong's metal scaffolding transition. Developed an LLM-based assessment system using HK regulatory materials, and a computer vision module for scaffolding tube orientation verification. Engaged with 12+ industry stakeholders across construction and safety sectors.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+      <div class="tl-body">
+        <div class="tl-phase">Semester 2 — Feb 2026</div>
+        <div class="tl-title">Expanding to Live Site Monitoring</div>
+        <div class="tl-text">Expert feedback from scaffolding inspection practitioners revealed a broader opportunity: live monitoring of active construction sites. With the Wang Fuk Court fire (November 2025, 168 fatalities) exposing critical gaps in real-time fire detection on construction sites, the team focused on building FireEye — an AI monitoring system addressing this urgent need.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+      <div class="tl-body">
+        <div class="tl-phase">March 2026</div>
+        <div class="tl-title">FireEye — Live and Deployed</div>
+        <div class="tl-text">FireEye went from concept to live deployed system in five weeks. Custom-trained YOLO model (12 classes, HK construction-specific), three-stage VLM reasoning pipeline, camera health diagnostics, and 182 passing unit tests. Live at fireeye.evnchn.io with four active industry conversations.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot-wrap"><div class="tl-dot" style="background:var(--muted2);box-shadow:0 0 0 2px var(--muted2);"></div></div>
+      <div class="tl-body">
+        <div class="tl-phase">Next — 2026</div>
+        <div class="tl-title">Industry Partnerships & Expansion</div>
+        <div class="tl-text">Active conversations with solution providers and construction tech partners. Exploring expansion into facilities management, PPE compliance, and broader construction safety verticals.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TEAM ── -->
+<section id="team">
+  <div class="section-label">The Team</div>
+  <h2>Who We Are</h2>
+  <p class="section-sub">Final-year CS and ISD students at HKUST. Click a card to learn more.</p>
+
+  <div class="team-grid">
+
+    <div class="member-card" onclick="toggleMember(this)">
+      <div class="member-photo"><span class="member-initials">EC</span></div>
+      <div class="member-name">Evan</div>
+      <div class="member-role">Technical Lead & AI Infrastructure</div>
+      <div class="member-expand">▸ More</div>
+      <div class="member-bio">
+        <ul>
+          <li>Built the full FireEye pipeline — YOLOv11n, VLM reasoning, camera diagnostics</li>
+          <li>Homelab infrastructure (RTX 3060 + Tesla P4)</li>
+          <li>Open-source contributor to NiceGUI (~130 PRs)</li>
+          <li>BSc CS (AI + ISD), HKUST; exchange at DTU</li>
+          <li>Prior: LLM pipelines at LGT Private Banking; OCR at Oursky</li>
+          <li>First Runner-Up, Cathay Hackathon 2025; Winner, BNP Sustainable Finance Hackathon 2026</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="member-card" onclick="toggleMember(this)">
+      <div class="member-photo"><span class="member-initials">SK</span></div>
+      <div class="member-name">Saanvi</div>
+      <div class="member-role">Data & Research Lead</div>
+      <div class="member-expand">▸ More</div>
+      <div class="member-bio">
+        <ul>
+          <li>Compiled the HK fire safety ground truth corpus anchoring FireEye's regulatory prompts</li>
+          <li>Project management and industry engagement across both semesters</li>
+          <li>Co-authored two research papers on generative AI in Ed-Tech</li>
+          <li>BSc ISD, HKUST — full 4-year scholarship, Dean's List</li>
+          <li>Prior: AI strategy at PwC; multi-agent AI at Arup; R&D at ASTRI</li>
+          <li>First Runner-Up, Cathay Hackathon 2025; Winner, BNP Sustainable Finance Hackathon 2026</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="member-card" onclick="toggleMember(this)">
+      <div class="member-photo"><span class="member-initials">SK</span></div>
+      <div class="member-name">Shalini</div>
+      <div class="member-role">Project Coordination & Outreach</div>
+      <div class="member-expand">▸ More</div>
+      <div class="member-bio">
+        <ul>
+          <li>Leads external outreach to industry partners</li>
+          <li>Manages project repository and work planning</li>
+          <li>BSc ISD, HKUST</li>
+          <li>Prior: Operations at HSBC; digital transformation at KPMG India</li>
+          <li>Lead organiser, TEDxHKUST 2024; ASPIRE League workshop, Tokyo Tech</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="member-card" onclick="toggleMember(this)">
+      <div class="member-photo"><span class="member-initials">CP</span></div>
+      <div class="member-name">Chloe</div>
+      <div class="member-role">UI/UX Design & Liaison</div>
+      <div class="member-expand">▸ More</div>
+      <div class="member-bio">
+        <ul>
+          <li>UI/UX design across both semesters; industry partner correspondence</li>
+          <li>BSc ISD, HKUST — Admission Scholarship; Deputy Head Student Ambassador</li>
+          <li>Prior: Business Analyst at ChinaSoft International (Kai Tak Sports Park); VR & AI at Soqqle</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="section-label">Get In Touch</div>
+  <h2>Let's Talk</h2>
+  <p class="section-sub">Interested in a partnership, pilot, or integration discussion? We'd love to hear from you.</p>
+
+  <div class="contact-grid">
+    <div class="contact-item">
+      <div class="contact-label">Technical Enquiries</div>
+      <div class="contact-value"><a href="mailto:kcchanci@connect.ust.hk">Evan Chan</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-label">Partnership & Research</div>
+      <div class="contact-value"><a href="mailto:saanvis0319@gmail.com">Saanvi Katyayan</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-label">Industry Outreach</div>
+      <div class="contact-value"><a href="mailto:skandasamy@connect.ust.hk">Shalini Kandasamy</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-label">Live System</div>
+      <div class="contact-value"><a href="https://fireeye.evnchn.io" target="_blank">fireeye.evnchn.io</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-brand"><span>Fire</span>Eye — HKUST FYP 2025–26</div>
+  <div class="footer-note">ISDN 4002 · Integrative Systems & Design</div>
+</footer>
+
+<script>
+function toggleCap(card) {
+  const detail = card.querySelector('.cap-detail');
+  const toggle = card.querySelector('.cap-toggle');
+  const isOpen = detail.classList.contains('open');
+  detail.classList.toggle('open', !isOpen);
+  toggle.textContent = isOpen ? '+' : '−';
+}
+
+function toggleMember(card) {
+  const bio = card.querySelector('.member-bio');
+  const expand = card.querySelector('.member-expand');
+  const isOpen = bio.classList.contains('open');
+  bio.classList.toggle('open', !isOpen);
+  expand.textContent = isOpen ? '▸ More' : '▾ Less';
+}
+</script>
+</body>
+</html>
